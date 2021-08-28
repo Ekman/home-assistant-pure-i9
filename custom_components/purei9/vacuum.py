@@ -13,7 +13,6 @@ from homeassistant.components.vacuum import (
     PLATFORM_SCHEMA
 )
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
-from homeassistant.helpers.entity import DeviceInfo
 from purei9_unofficial.cloud import CloudClient, CloudRobot
 from . import purei9
 
@@ -90,4 +89,4 @@ class PureI9(StateVacuumEntity):
     def update(self) -> None:
         self._battery = purei9.battery_to_hass(self._robot.getbattery())
         self._state = purei9.state_to_hass(self._robot.getstatus())
-        self._available = robot.isconnected()
+        self._available = self._robot.isconnected()

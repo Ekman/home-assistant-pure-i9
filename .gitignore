@@ -1,7 +1,8 @@
 .idea
 
-# Created by https://www.toptal.com/developers/gitignore/api/windows,linux,osx,python,phpstorm
-# Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,osx,python,phpstorm
+
+# Created by https://www.toptal.com/developers/gitignore/api/windows,linux,osx,python,phpstorm,visualstudiocode
+# Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,osx,python,phpstorm,visualstudiocode
 
 ### Linux ###
 *~
@@ -293,6 +294,22 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Local History for Visual Studio Code
+.history/
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+.ionide
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db
@@ -319,4 +336,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/windows,linux,osx,python,phpstorm
+# End of https://www.toptal.com/developers/gitignore/api/windows,linux,osx,python,phpstorm,visualstudiocode
