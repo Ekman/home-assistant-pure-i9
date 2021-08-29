@@ -1,6 +1,5 @@
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
-
 from homeassistant.components.vacuum import (
     SUPPORT_BATTERY,
     SUPPORT_PAUSE,
@@ -10,7 +9,9 @@ from homeassistant.components.vacuum import (
     SUPPORT_STATUS,
     SUPPORT_STOP,
     StateVacuumEntity,
-    PLATFORM_SCHEMA
+    PLATFORM_SCHEMA,
+    STATE_CLEANING,
+    STATE_PAUSED
 )
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloud import CloudClient, CloudRobot
@@ -75,7 +76,8 @@ class PureI9(StateVacuumEntity):
         return "Error"
 
     def start(self) -> None:
-        self._robot.startclean()
+        if self._state != STATE_CLEANING:
+            self._robot.startclean()
 
     def return_to_base(self) -> None:
         self._robot.gohome()
@@ -84,7 +86,8 @@ class PureI9(StateVacuumEntity):
         self._robot.stopclean()
 
     def pause(self) -> None:
-        self._robot.pauseclean()
+        if self._state != STATE_PAUSED:
+            self._robot.pauseclean()
 
     def update(self) -> None:
         self._battery = purei9.battery_to_hass(self._robot.getbattery())
