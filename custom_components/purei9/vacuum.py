@@ -28,7 +28,15 @@ def setup_platform(hass, config, add_entities, discovery_info = None) -> None:
     add_entities(entities)
 
 class PureI9(StateVacuumEntity):
-    def __init__(self, robot: CloudRobot, id: str, name: str, battery: int, state: str, available: bool):
+    def __init__(
+        self,
+        robot: CloudRobot,
+        id: str,
+        name: str,
+        battery: int,
+        state: str,
+        available: bool
+    ):
         self._robot = robot
         self._id = id
         self._name = name
