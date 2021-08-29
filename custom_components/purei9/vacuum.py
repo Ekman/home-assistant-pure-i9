@@ -8,6 +8,8 @@ from homeassistant.components.vacuum import (
     SUPPORT_STATE,
     SUPPORT_STATUS,
     SUPPORT_STOP,
+    SUPPORT_TURN_ON,
+    SUPPORT_TURN_OFF,
     StateVacuumEntity,
     PLATFORM_SCHEMA,
     STATE_CLEANING,
@@ -63,7 +65,7 @@ class PureI9(StateVacuumEntity):
 
     @property
     def supported_features(self) -> int:
-        return SUPPORT_BATTERY | SUPPORT_START | SUPPORT_RETURN_HOME | SUPPORT_STOP | SUPPORT_PAUSE | SUPPORT_STATE
+        return SUPPORT_BATTERY | SUPPORT_START | SUPPORT_RETURN_HOME | SUPPORT_STOP | SUPPORT_PAUSE | SUPPORT_TURN_ON | SUPPORT_TURN_OFF | SUPPORT_STATE
 
     @property
     def name(self) -> str:
@@ -83,6 +85,10 @@ class PureI9(StateVacuumEntity):
         # However, I can't fetch any error message
         return "Error"
 
+    @property
+    def is_on(self) -> bool:
+        return self._state == STATE_CLEANING
+
     def start(self) -> None:
         if self._state != STATE_CLEANING:
             self._robot.startclean()
@@ -96,6 +102,13 @@ class PureI9(StateVacuumEntity):
     def pause(self) -> None:
         if self._state != STATE_PAUSED:
             self._robot.pauseclean()
+
+    def turn_on(self) -> None:
+        self.start()
+
+    def turn_off(self) -> None:
+        self.stop()
+        self.return_to_base()
 
     def update(self) -> None:
         self._battery = purei9.battery_to_hass(self._robot.getbattery())
