@@ -65,7 +65,16 @@ class PureI9(StateVacuumEntity):
 
     @property
     def supported_features(self) -> int:
-        return SUPPORT_BATTERY | SUPPORT_START | SUPPORT_RETURN_HOME | SUPPORT_STOP | SUPPORT_PAUSE | SUPPORT_TURN_ON | SUPPORT_TURN_OFF | SUPPORT_STATE
+        return (
+            SUPPORT_BATTERY
+            | SUPPORT_START
+            | SUPPORT_RETURN_HOME
+            | SUPPORT_STOP
+            | SUPPORT_PAUSE
+            | SUPPORT_TURN_ON
+            | SUPPORT_TURN_OFF
+            | SUPPORT_STATE
+        )
 
     @property
     def name(self) -> str:
