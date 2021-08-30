@@ -55,10 +55,12 @@ class PureI9(StateVacuumEntity):
 
     @staticmethod
     def create(robot: CloudRobot):
+        pure_i9_battery = robot.getbattery()
+
         id = robot.getid()
         name = robot.getname()
-        battery = purei9.battery_to_hass(robot.getbattery())
-        state = purei9.state_to_hass(robot.getstatus())
+        battery = purei9.battery_to_hass(pure_i9_battery)
+        state = purei9.state_to_hass(robot.getstatus(), pure_i9_battery)
         available = robot.isconnected()
         return PureI9(robot, id, name, battery, state, available)
 
@@ -127,8 +129,8 @@ class PureI9(StateVacuumEntity):
         self.return_to_base()
 
     def update(self) -> None:
-        battery = self._robot.getbattery()
+        pure_i9_battery = self._robot.getbattery()
 
-        self._battery = purei9.battery_to_hass(battery)
-        self._state = purei9.state_to_hass(self._robot.getstatus(), battery)
+        self._battery = purei9.battery_to_hass(pure_i9_battery)
+        self._state = purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
         self._available = self._robot.isconnected()
