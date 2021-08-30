@@ -27,8 +27,8 @@ PURE_I9_STATE_MAP = {
 }
 
 def state_to_hass(pure_i9_state: str, pure_i9_battery: str) -> str:
-    # The Pure i9 will become "Sleeping" when docked and charged 100% or when stopped.
-    # In order to detect if it's docker or if it's just idling in the middle of a room
+    # The Pure i9 will become "Sleeping" when docked and charged 100% OR when stopped.
+    # In order to detect if it's docket or if it's just idling in the middle of a room
     # check the battery level. If it's full then we're docked.
     if pure_i9_state == RobotStates[10]:
         return STATE_DOCKED if pure_i9_state == BatteryStatus[6] else STATE_IDLE
