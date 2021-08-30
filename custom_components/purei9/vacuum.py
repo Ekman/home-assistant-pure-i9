@@ -120,6 +120,8 @@ class PureI9(StateVacuumEntity):
         self.return_to_base()
 
     def update(self) -> None:
-        self._battery = purei9.battery_to_hass(self._robot.getbattery())
-        self._state = purei9.state_to_hass(self._robot.getstatus())
+        battery = self._robot.getbattery()
+
+        self._battery = purei9.battery_to_hass(battery)
+        self._state = purei9.state_to_hass(self._robot.getstatus(), battery)
         self._available = self._robot.isconnected()
