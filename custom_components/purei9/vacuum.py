@@ -13,7 +13,8 @@ from homeassistant.components.vacuum import (
     StateVacuumEntity,
     PLATFORM_SCHEMA,
     STATE_CLEANING,
-    STATE_PAUSED
+    STATE_PAUSED,
+    STATE_IDLE
 )
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloud import CloudClient, CloudRobot
@@ -42,9 +43,9 @@ class PureI9(StateVacuumEntity):
         robot: CloudRobot,
         id: str,
         name: str,
-        battery: int,
-        state: str,
-        available: bool
+        battery: int = 100,
+        state: str = STATE_IDLE,
+        available: bool = True
     ):
         self._robot = robot
         self._id = id
@@ -55,14 +56,9 @@ class PureI9(StateVacuumEntity):
 
     @staticmethod
     def create(robot: CloudRobot):
-        pure_i9_battery = robot.getbattery()
-
         id = robot.getid()
         name = robot.getname()
-        battery = purei9.battery_to_hass(pure_i9_battery)
-        state = purei9.state_to_hass(robot.getstatus(), pure_i9_battery)
-        available = robot.isconnected()
-        return PureI9(robot, id, name, battery, state, available)
+        return PureI9(robot, id, name)
 
     @property
     def unique_id(self) -> str:
