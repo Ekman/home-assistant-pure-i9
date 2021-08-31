@@ -31,7 +31,7 @@ def state_to_hass(pure_i9_state: str, pure_i9_battery: str) -> str:
     # In order to detect if it's docket or if it's just idling in the middle of a room
     # check the battery level. If it's full then we're docked.
     if pure_i9_state == RobotStates[10]:
-        return STATE_DOCKED if pure_i9_state == BatteryStatus[6] else STATE_IDLE
+        return STATE_DOCKED if pure_i9_battery == BatteryStatus[6] else STATE_IDLE
 
     return PURE_I9_STATE_MAP.get(pure_i9_state, STATE_IDLE)
 
