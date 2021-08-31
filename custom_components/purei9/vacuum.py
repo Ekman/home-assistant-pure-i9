@@ -104,8 +104,11 @@ class PureI9(StateVacuumEntity):
         return self._state == STATE_CLEANING
 
     def start(self) -> None:
+        # According to Home Assistant, pause should be an idempotent action. However, the Pure i9 will toggle pause
+        # on/off if called multiple times. Circumvent that.
         if self._state != STATE_CLEANING:
             self._robot.startclean()
+            self._robot._state = STATE_CLEANING
 
     def return_to_base(self) -> None:
         self._robot.gohome()
@@ -116,6 +119,9 @@ class PureI9(StateVacuumEntity):
     def pause(self) -> None:
         if self._state != STATE_PAUSED:
             self._robot.pauseclean()
+            # According to Home Assistant, pause should be an idempotent action. However, the Pure i9 will toggle pause
+            # on/off if called multiple times. Circumvent that.
+            self._robot._state = STATE_PAUSED
 
     def turn_on(self) -> None:
         self.start()
