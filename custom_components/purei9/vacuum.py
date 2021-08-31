@@ -53,6 +53,9 @@ class PureI9(StateVacuumEntity):
         self._battery = battery
         self._state = state
         self._available = available
+        # The Pure i9 library caches results. When we do state updates, the next update
+        # is sometimes cached. Override that so we can get the desired state quicker.
+        self._override_next_state_update = None
 
     @staticmethod
     def create(robot: CloudRobot):
@@ -108,7 +111,7 @@ class PureI9(StateVacuumEntity):
         # on/off if called multiple times. Circumvent that.
         if self._state != STATE_CLEANING:
             self._robot.startclean()
-            self._robot._state = STATE_CLEANING
+            self._override_next_state_update = self._state = STATE_CLEANING
 
     def return_to_base(self) -> None:
         self._robot.gohome()
@@ -121,7 +124,7 @@ class PureI9(StateVacuumEntity):
             self._robot.pauseclean()
             # According to Home Assistant, pause should be an idempotent action. However, the Pure i9 will toggle pause
             # on/off if called multiple times. Circumvent that.
-            self._robot._state = STATE_PAUSED
+            self._override_next_state_update = self._state = STATE_PAUSED
 
     def turn_on(self) -> None:
         self.start()
@@ -134,5 +137,7 @@ class PureI9(StateVacuumEntity):
         pure_i9_battery = self._robot.getbattery()
 
         self._battery = purei9.battery_to_hass(pure_i9_battery)
-        self._state = purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
+        self._state = self._override_next_state_update or purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
         self._available = self._robot.isconnected()
+
+        self._override_next_state_update = None
