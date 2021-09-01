@@ -51,6 +51,20 @@ class PureI9(StateVacuumEntity):
         return PureI9(robot, params)
 
     @property
+    def supported_features(self) -> int:
+        """Explain to Home Assistant what features are implemented"""
+        return (
+            SUPPORT_BATTERY
+            | SUPPORT_START
+            | SUPPORT_RETURN_HOME
+            | SUPPORT_STOP
+            | SUPPORT_PAUSE
+            | SUPPORT_TURN_ON
+            | SUPPORT_TURN_OFF
+            | SUPPORT_STATE
+        )
+
+    @property
     def device_info(self) -> DeviceInfo:
         """Return information for the device registry"""
         # See: https://developers.home-assistant.io/docs/device_registry_index/
@@ -73,20 +87,6 @@ class PureI9(StateVacuumEntity):
     def available(self) -> bool:
         """If the robot is connected to the cloud and ready for commands"""
         return self._params.available
-
-    @property
-    def supported_features(self) -> int:
-        """Explain to Home Assistant what features are implemented"""
-        return (
-            SUPPORT_BATTERY
-            | SUPPORT_START
-            | SUPPORT_RETURN_HOME
-            | SUPPORT_STOP
-            | SUPPORT_PAUSE
-            | SUPPORT_TURN_ON
-            | SUPPORT_TURN_OFF
-            | SUPPORT_STATE
-        )
 
     @property
     def name(self) -> str:
