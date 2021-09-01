@@ -6,10 +6,11 @@ commands:
           key: '{{ checksum "requirements.txt" }}'
       - run: >-
           pip install
-          --no-cache-dir
           --disable-pip-version-check
           --no-clean
+          --no-compile
           --cache-dir /tmp/pip
+          --quiet
           --requirement requirements.txt
       - save_cache:
           key: '{{ checksum "requirements.txt" }}'
