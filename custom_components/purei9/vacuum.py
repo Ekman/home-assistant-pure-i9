@@ -59,7 +59,7 @@ class PureI9(StateVacuumEntity):
             "name": self._params.name,
             "manufacturer": const.MANUFACTURER,
             "model": const.MODEL,
-            "sw_version": self._robot.firmware
+            "sw_version": self._params.firmware
         }
 
     @property
