@@ -71,6 +71,7 @@ class PureI9(StateVacuumEntity):
 
     @property
     def supported_features(self) -> int:
+        """Explain to Home Assistant what features are implemented"""
         return (
             SUPPORT_BATTERY
             | SUPPORT_START
@@ -84,27 +85,33 @@ class PureI9(StateVacuumEntity):
 
     @property
     def name(self) -> str:
+        """Name of the vacuum"""
         return self._name
 
     @property
     def battery_level(self) -> int:
+        """Battery level, between 0-100"""
         return self._battery
 
     @property
     def state(self) -> str:
+        """Check Home Assistant state variables"""
         return self._state
 
     @property
     def error(self) -> str:
+        """If the vacuum reports STATE_ERROR then explain the error"""
         # According to documentation then this is required if the entity
         # can report error states. However, I can't fetch any error message.
         return "Error"
 
     @property
     def is_on(self) -> bool:
+        """If the vacuum is on or off"""
         return self._state == STATE_CLEANING
 
     def start(self) -> None:
+        """Start cleaning"""
         # According to Home Assistant, pause should be an idempotent action.
         # However, the Pure i9 will toggle pause on/off if called multiple
         # times. Circumvent that.
@@ -113,12 +120,15 @@ class PureI9(StateVacuumEntity):
             self._override_next_state_update = self._state = STATE_CLEANING
 
     def return_to_base(self) -> None:
+        """Return to the dock"""
         self._robot.gohome()
 
     def stop(self) -> None:
+        """Stop cleaning"""
         self._robot.stopclean()
 
     def pause(self) -> None:
+        """Pause cleaning"""
         if self._state != STATE_PAUSED:
             self._robot.pauseclean()
             # According to Home Assistant, pause should be an idempotent
@@ -127,13 +137,19 @@ class PureI9(StateVacuumEntity):
             self._override_next_state_update = self._state = STATE_PAUSED
 
     def turn_on(self) -> None:
+        """Turn the vacuum on"""
         self.start()
 
     def turn_off(self) -> None:
+        """Turn the vacuum off"""
         self.stop()
         self.return_to_base()
 
     def update(self) -> None:
+        """
+        Called by Home Assistant asking the vacuum to update to the latest state.
+        Can contain IO code.
+        """
         pure_i9_battery = self._robot.getbattery()
 
         self._battery = purei9.battery_to_hass(pure_i9_battery)
