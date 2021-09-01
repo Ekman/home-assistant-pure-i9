@@ -1,3 +1,4 @@
+"""Home Assistant vacuum entity"""
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant.components.vacuum import (
@@ -26,6 +27,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 })
 
 def setup_platform(hass, config, add_entities, discovery_info=None) -> None:
+    """Register all Pure i9's in Home Assistant"""
     client = CloudClient(config[CONF_EMAIL], config.get(CONF_PASSWORD))
     entities = map(PureI9.create, client.getRobots())
     add_entities(entities)
@@ -52,16 +54,19 @@ class PureI9(StateVacuumEntity):
 
     @staticmethod
     def create(robot: CloudRobot):
+        """Named constructor for creating a new instance from a CloudRobot"""
         id = robot.getid()
         name = robot.getname()
         return PureI9(robot, id, name)
 
     @property
     def unique_id(self) -> str:
+        """Unique identifier to the vacuum"""
         return self._id
 
     @property
     def available(self) -> bool:
+        """If the robot is connected to the cloud and ready for commands"""
         return self._available
 
     @property
