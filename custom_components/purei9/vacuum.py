@@ -1,6 +1,7 @@
 """Home Assistant vacuum entity"""
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.components.vacuum import (
     SUPPORT_BATTERY,
     SUPPORT_PAUSE,
@@ -17,7 +18,7 @@ from homeassistant.components.vacuum import (
 )
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloud import CloudClient, CloudRobot
-from . import purei9
+from . import purei9, const
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
@@ -48,6 +49,20 @@ class PureI9(StateVacuumEntity):
         """Named constructor for creating a new instance from a CloudRobot"""
         params = purei9.Params(robot.getid(), robot.getname())
         return PureI9(robot, params)
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return information for the device registry"""
+        # See: https://developers.home-assistant.io/docs/device_registry_index/
+        return {
+            "identifiers": {(const.DOMAIN, self._params.unique_id)},
+            "name": self._params.name,
+            "manufacturer": const.MANUFACTURER,
+            "sw_version": self._params.firmware,
+            # We don't know the exact model, i.e. Pure i9 or Pure i9.2,
+            # so only report a default model
+            "default_model": const.MODEL
+        }
 
     @property
     def unique_id(self) -> str:
@@ -119,11 +134,11 @@ class PureI9(StateVacuumEntity):
 
     def pause(self) -> None:
         """Pause cleaning"""
+        # According to Home Assistant, pause should be an idempotent
+        # action. However, the Pure i9 will toggle pause on/off if
+        # called multiple times. Circumvent that.
         if self._params.state != STATE_PAUSED:
             self._robot.pauseclean()
-            # According to Home Assistant, pause should be an idempotent
-            # action. However, the Pure i9 will toggle pause on/off if
-            # called multiple times. Circumvent that.
             self._override_next_state_update = self._params.state = STATE_PAUSED
 
     def turn_on(self) -> None:
@@ -146,5 +161,6 @@ class PureI9(StateVacuumEntity):
         self._params.state = (self._override_next_state_update
                         or purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery))
         self._params.available = self._robot.isconnected()
+        self._params.firmware = self._robot.getfirmware()
 
         self._override_next_state_update = None
