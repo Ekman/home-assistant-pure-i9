@@ -1,12 +1,12 @@
 version: 2.1
 jobs:
-  purei9:
+  lint:
     docker:
       - image: cimg/python:3.9
     steps:
-      - run: pip install
+      - run: pip install -r requirements.txt
       - run: find custom_components/purei9 -name "*.py" -exec pylint {} \;
 workflows:
   purei9:
     jobs:
-      - purei9
+      - lint
