@@ -25,7 +25,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_PASSWORD): cv.string
 })
 
-def setup_platform(hass, config, add_entities, discovery_info=None) -> None:
+def setup_platform(_hass, config, add_entities) -> None:
     """Register all Pure i9's in Home Assistant"""
     client = CloudClient(config[CONF_EMAIL], config.get(CONF_PASSWORD))
     entities = map(PureI9.create, client.getRobots())
@@ -119,11 +119,11 @@ class PureI9(StateVacuumEntity):
             self._robot.startclean()
             self._override_next_state_update = self._state = STATE_CLEANING
 
-    def return_to_base(self) -> None:
+    def return_to_base(self, **kwargs) -> None:
         """Return to the dock"""
         self._robot.gohome()
 
-    def stop(self) -> None:
+    def stop(self, **kwargs) -> None:
         """Stop cleaning"""
         self._robot.stopclean()
 
@@ -153,8 +153,8 @@ class PureI9(StateVacuumEntity):
         pure_i9_battery = self._robot.getbattery()
 
         self._battery = purei9.battery_to_hass(pure_i9_battery)
-        self._state = self._override_next_state_update
-                        or purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
+        self._state = (self._override_next_state_update
+                        or purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery))
         self._available = self._robot.isconnected()
 
         self._override_next_state_update = None
