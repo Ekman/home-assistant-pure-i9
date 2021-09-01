@@ -154,7 +154,7 @@ class PureI9(StateVacuumEntity):
 
         self._battery = purei9.battery_to_hass(pure_i9_battery)
         self._state = self._override_next_state_update
-            or purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
+                        or purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
         self._available = self._robot.isconnected()
 
         self._override_next_state_update = None
