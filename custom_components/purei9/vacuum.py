@@ -59,7 +59,7 @@ class PureI9(StateVacuumEntity):
             "name": self._params.name,
             "manufacturer": const.MANUFACTURER,
             "model": const.MODEL,
-            "sw_version": self._robot.getfirmware()
+            "sw_version": self._robot.firmware
         }
 
     @property
@@ -159,5 +159,6 @@ class PureI9(StateVacuumEntity):
         self._params.state = (self._override_next_state_update
                         or purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery))
         self._params.available = self._robot.isconnected()
+        self._params.firmware = self._robot.getfirmware()
 
         self._override_next_state_update = None
