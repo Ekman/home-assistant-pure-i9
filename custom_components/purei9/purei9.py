@@ -62,11 +62,11 @@ class Params:
         self._name = name
 
     @property
-    def unique_id(self):
+    def unique_id(self) -> str:
         """Immutable unique identifier"""
         return self._unique_id
 
     @property
-    def name(self):
+    def name(self) -> str:
         """Immutable name"""
         return self._name
