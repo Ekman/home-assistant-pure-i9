@@ -132,11 +132,11 @@ class PureI9(StateVacuumEntity):
 
     def pause(self) -> None:
         """Pause cleaning"""
+        # According to Home Assistant, pause should be an idempotent
+        # action. However, the Pure i9 will toggle pause on/off if
+        # called multiple times. Circumvent that.
         if self._params.state != STATE_PAUSED:
             self._robot.pauseclean()
-            # According to Home Assistant, pause should be an idempotent
-            # action. However, the Pure i9 will toggle pause on/off if
-            # called multiple times. Circumvent that.
             self._override_next_state_update = self._params.state = STATE_PAUSED
 
     def turn_on(self) -> None:
