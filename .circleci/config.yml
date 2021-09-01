@@ -3,7 +3,7 @@ commands:
   pip:
     steps:
       - restore_cache:
-          key: { { .Branch } }-{{ checksum "requirements.txt" }}
+          key: "{{ .Branch }}-{{ checksum 'requirements.txt' }}"
       - run: >-
       pip install
       --no-cache-dir
@@ -12,7 +12,7 @@ commands:
       --cache-dir /tmp/pip
       --requirement requirements.txt
       - save_cache:
-          key: { { .Branch } }-{{ checksum "requirements.txt" }}
+          key: "{{ .Branch }}-{{ checksum 'requirements.txt' }}"
           paths: [ /tmp/pip ]
 jobs:
   lint:
