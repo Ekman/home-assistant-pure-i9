@@ -6,4 +6,8 @@ jobs:
     steps:
       - run: apt-get update && apt-get install -y pylint
       - run: pip install
-
+      - run: find custom_components/purei9 -name "*.py" -exec pylint {} \;
+workflows:
+  purei9:
+    jobs:
+      - purei9
