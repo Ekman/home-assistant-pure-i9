@@ -56,7 +56,7 @@ class Params:
     battery: int = 100
     state: str = STATE_IDLE
     available: bool = True
-    firmware: str | None = None
+    firmware: str = None
 
     def __init__(self, unique_id: str, name: str):
         self._unique_id = unique_id
