@@ -25,20 +25,20 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_PASSWORD): cv.string
 })
 
-def setup_platform(hass, config, add_entities, discovery_info = None) -> None:
+def setup_platform(hass, config, add_entities, discovery_info=None) -> None:
     client = CloudClient(config[CONF_EMAIL], config.get(CONF_PASSWORD))
     entities = map(PureI9.create, client.getRobots())
     add_entities(entities)
 
 class PureI9(StateVacuumEntity):
     def __init__(
-        self,
-        robot: CloudRobot,
-        id: str,
-        name: str,
-        battery: int = 100,
-        state: str = STATE_IDLE,
-        available: bool = True
+            self,
+            robot: CloudRobot,
+            id: str,
+            name: str,
+            battery: int = 100,
+            state: str = STATE_IDLE,
+            available: bool = True
         ):
         self._robot = robot
         self._id = id
@@ -91,8 +91,8 @@ class PureI9(StateVacuumEntity):
 
     @property
     def error(self) -> str:
-        # According to documentation then this is required if the entity can report error states
-        # However, I can't fetch any error message
+        # According to documentation then this is required if the entity
+        # can report error states. However, I can't fetch any error message.
         return "Error"
 
     @property
@@ -100,8 +100,9 @@ class PureI9(StateVacuumEntity):
         return self._state == STATE_CLEANING
 
     def start(self) -> None:
-        # According to Home Assistant, pause should be an idempotent action. However, the Pure i9 will toggle pause
-        # on/off if called multiple times. Circumvent that.
+        # According to Home Assistant, pause should be an idempotent action.
+        # However, the Pure i9 will toggle pause on/off if called multiple
+        # times. Circumvent that.
         if self._state != STATE_CLEANING:
             self._robot.startclean()
             self._override_next_state_update = self._state = STATE_CLEANING
@@ -115,8 +116,9 @@ class PureI9(StateVacuumEntity):
     def pause(self) -> None:
         if self._state != STATE_PAUSED:
             self._robot.pauseclean()
-            # According to Home Assistant, pause should be an idempotent action. However, the Pure i9 will toggle pause
-            # on/off if called multiple times. Circumvent that.
+            # According to Home Assistant, pause should be an idempotent
+            # action. However, the Pure i9 will toggle pause on/off if
+            # called multiple times. Circumvent that.
             self._override_next_state_update = self._state = STATE_PAUSED
 
     def turn_on(self) -> None:
