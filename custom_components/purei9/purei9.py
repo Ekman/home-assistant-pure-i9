@@ -1,3 +1,4 @@
+"""Pure i9 business logic"""
 from purei9_unofficial.common import BatteryStatus, RobotStates
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
@@ -27,6 +28,7 @@ PURE_I9_STATE_MAP = {
 }
 
 def state_to_hass(pure_i9_state: str, pure_i9_battery: str) -> str:
+    """Translate Pure i9 data into a Home Assistant state constant"""
     # The Pure i9 will become "Sleeping" when docked and charged 100% OR when stopped.
     # In order to detect if it's docket or if it's just idling in the middle of a room
     # check the battery level. If it's full then we're docked.
@@ -46,4 +48,25 @@ PURE_I9_BATTERY_MAP = {
 }
 
 def battery_to_hass(pure_i9_battery: str) -> int:
+    """Translate Pure i9 data into a Home Assistant battery level"""
     return PURE_I9_BATTERY_MAP.get(pure_i9_battery, 0)
+
+class Params:
+    """Data available in the state"""
+    battery: int = 100
+    state: str = STATE_IDLE
+    available: bool = True
+
+    def __init__(self, unique_id: str, name: str):
+        self._unique_id = unique_id
+        self._name = name
+
+    @property
+    def unique_id(self) -> str:
+        """Immutable unique identifier"""
+        return self._unique_id
+
+    @property
+    def name(self) -> str:
+        """Immutable name"""
+        return self._name
