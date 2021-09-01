@@ -1,4 +1,4 @@
-## Helpful links
+# Helpful links
 
 * Definitions of supported features: https://github.com/home-assistant/core/blob/dev/homeassistant/components/vacuum/services.yaml
 * Source code to vacuum entity: https://github.com/home-assistant/core/tree/dev/homeassistant/components/vacuum
