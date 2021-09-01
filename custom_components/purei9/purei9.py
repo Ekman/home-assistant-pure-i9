@@ -50,3 +50,23 @@ PURE_I9_BATTERY_MAP = {
 def battery_to_hass(pure_i9_battery: str) -> int:
     """Translate Pure i9 data into a Home Assistant battery level"""
     return PURE_I9_BATTERY_MAP.get(pure_i9_battery, 0)
+
+class Params:
+    """Data available in the state"""
+    battery: int = 100
+    state: str = STATE_IDLE
+    available: bool = True
+
+    def __init__(self, unique_id: str, name: str):
+        self._unique_id = unique_id
+        self._name = name
+
+    @property
+    def unique_id(self):
+        """Immutable unique identifier"""
+        return self._unique_id
+
+    @property
+    def name(self):
+        """Immutable name"""
+        return self._name

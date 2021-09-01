@@ -13,8 +13,7 @@ from homeassistant.components.vacuum import (
     StateVacuumEntity,
     PLATFORM_SCHEMA,
     STATE_CLEANING,
-    STATE_PAUSED,
-    STATE_IDLE
+    STATE_PAUSED
 )
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloud import CloudClient, CloudRobot
@@ -36,18 +35,10 @@ class PureI9(StateVacuumEntity):
     def __init__(
             self,
             robot: CloudRobot,
-            _id: str,
-            name: str,
-            battery: int = 100,
-            state: str = STATE_IDLE,
-            available: bool = True
+            params: purei9.Params,
         ):
         self._robot = robot
-        self._id = _id
-        self._name = name
-        self._battery = battery
-        self._state = state
-        self._available = available
+        self._params = params
         # The Pure i9 library caches results. When we do state updates, the next update
         # is sometimes cached. Override that so we can get the desired state quicker.
         self._override_next_state_update = None
@@ -55,19 +46,18 @@ class PureI9(StateVacuumEntity):
     @staticmethod
     def create(robot: CloudRobot):
         """Named constructor for creating a new instance from a CloudRobot"""
-        _id = robot.getid()
-        name = robot.getname()
-        return PureI9(robot, _id, name)
+        params = purei9.Params(robot.getid(), robot.getname())
+        return PureI9(robot, params)
 
     @property
     def unique_id(self) -> str:
         """Unique identifier to the vacuum"""
-        return self._id
+        return self._params.unique_id
 
     @property
     def available(self) -> bool:
         """If the robot is connected to the cloud and ready for commands"""
-        return self._available
+        return self._params.available
 
     @property
     def supported_features(self) -> int:
@@ -86,17 +76,17 @@ class PureI9(StateVacuumEntity):
     @property
     def name(self) -> str:
         """Name of the vacuum"""
-        return self._name
+        return self._params.name
 
     @property
     def battery_level(self) -> int:
         """Battery level, between 0-100"""
-        return self._battery
+        return self._params.battery
 
     @property
     def state(self) -> str:
         """Check Home Assistant state variables"""
-        return self._state
+        return self._params.state
 
     @property
     def error(self) -> str:
@@ -108,16 +98,16 @@ class PureI9(StateVacuumEntity):
     @property
     def is_on(self) -> bool:
         """If the vacuum is on or off"""
-        return self._state == STATE_CLEANING
+        return self._params.state == STATE_CLEANING
 
     def start(self) -> None:
         """Start cleaning"""
         # According to Home Assistant, pause should be an idempotent action.
         # However, the Pure i9 will toggle pause on/off if called multiple
         # times. Circumvent that.
-        if self._state != STATE_CLEANING:
+        if self._params.state != STATE_CLEANING:
             self._robot.startclean()
-            self._override_next_state_update = self._state = STATE_CLEANING
+            self._override_next_state_update = self._params.state = STATE_CLEANING
 
     def return_to_base(self, **kwargs) -> None:
         """Return to the dock"""
@@ -129,12 +119,12 @@ class PureI9(StateVacuumEntity):
 
     def pause(self) -> None:
         """Pause cleaning"""
-        if self._state != STATE_PAUSED:
+        if self._params.state != STATE_PAUSED:
             self._robot.pauseclean()
             # According to Home Assistant, pause should be an idempotent
             # action. However, the Pure i9 will toggle pause on/off if
             # called multiple times. Circumvent that.
-            self._override_next_state_update = self._state = STATE_PAUSED
+            self._override_next_state_update = self._params.state = STATE_PAUSED
 
     def turn_on(self) -> None:
         """Turn the vacuum on"""
@@ -152,9 +142,9 @@ class PureI9(StateVacuumEntity):
         """
         pure_i9_battery = self._robot.getbattery()
 
-        self._battery = purei9.battery_to_hass(pure_i9_battery)
-        self._state = (self._override_next_state_update
+        self._params.battery = purei9.battery_to_hass(pure_i9_battery)
+        self._params.state = (self._override_next_state_update
                         or purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery))
-        self._available = self._robot.isconnected()
+        self._params.available = self._robot.isconnected()
 
         self._override_next_state_update = None
