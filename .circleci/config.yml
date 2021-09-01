@@ -23,6 +23,7 @@ jobs:
       - checkout
       - pip
       - run: pylint custom_components/purei9
+      - run: python3 -m json.tool custom_components/purei9/manifest.json
 workflows:
   purei9:
     jobs:
