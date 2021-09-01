@@ -32,6 +32,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None) -> None:
     add_entities(entities)
 
 class PureI9(StateVacuumEntity):
+    """The main Pure i9 vacuum entity"""
     def __init__(
             self,
             robot: CloudRobot,
@@ -54,9 +55,9 @@ class PureI9(StateVacuumEntity):
     @staticmethod
     def create(robot: CloudRobot):
         """Named constructor for creating a new instance from a CloudRobot"""
-        id = robot.getid()
+        _id = robot.getid()
         name = robot.getname()
-        return PureI9(robot, id, name)
+        return PureI9(robot, _id, name)
 
     @property
     def unique_id(self) -> str:
@@ -152,7 +153,8 @@ class PureI9(StateVacuumEntity):
         pure_i9_battery = self._robot.getbattery()
 
         self._battery = purei9.battery_to_hass(pure_i9_battery)
-        self._state = self._override_next_state_update or purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
+        self._state = self._override_next_state_update
+            or purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
         self._available = self._robot.isconnected()
 
         self._override_next_state_update = None
