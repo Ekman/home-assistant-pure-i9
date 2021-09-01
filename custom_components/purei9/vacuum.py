@@ -7,7 +7,6 @@ from homeassistant.components.vacuum import (
     SUPPORT_RETURN_HOME,
     SUPPORT_START,
     SUPPORT_STATE,
-    SUPPORT_STATUS,
     SUPPORT_STOP,
     SUPPORT_TURN_ON,
     SUPPORT_TURN_OFF,
@@ -36,14 +35,14 @@ class PureI9(StateVacuumEntity):
     def __init__(
             self,
             robot: CloudRobot,
-            id: str,
+            _id: str,
             name: str,
             battery: int = 100,
             state: str = STATE_IDLE,
             available: bool = True
         ):
         self._robot = robot
-        self._id = id
+        self._id = _id
         self._name = name
         self._battery = battery
         self._state = state
