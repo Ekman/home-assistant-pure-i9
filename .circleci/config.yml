@@ -5,12 +5,12 @@ commands:
       - restore_cache:
           key: "{{ .Branch }}-{{ checksum 'requirements.txt' }}"
       - run: >-
-      pip install
-      --no-cache-dir
-      --disable-pip-version-check
-      --no-clean
-      --cache-dir /tmp/pip
-      --requirement requirements.txt
+          pip install
+          --no-cache-dir
+          --disable-pip-version-check
+          --no-clean
+          --cache-dir /tmp/pip
+          --requirement requirements.txt
       - save_cache:
           key: "{{ .Branch }}-{{ checksum 'requirements.txt' }}"
           paths: [ /tmp/pip ]
