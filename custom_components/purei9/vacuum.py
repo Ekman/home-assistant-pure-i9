@@ -58,8 +58,10 @@ class PureI9(StateVacuumEntity):
             "identifiers": {(const.DOMAIN, self._params.unique_id)},
             "name": self._params.name,
             "manufacturer": const.MANUFACTURER,
-            "model": const.MODEL,
-            "sw_version": self._params.firmware
+            "sw_version": self._params.firmware,
+            # We don't know the exact model, i.e. Pure i9 or Pure i9.2,
+            # so only report a default model
+            "default_model": const.MODEL
         }
 
     @property
