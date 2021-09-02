@@ -49,9 +49,6 @@ class PureI9(StateVacuumEntity):
         ):
         self._robot = robot
         self._params = params
-        # The Pure i9 library caches results. When we do state updates, the next update
-        # is sometimes cached. Override that so we can get the desired state quicker.
-        self._override_next_state_update = None
 
     @staticmethod
     def create(robot: CloudRobot):
@@ -126,7 +123,7 @@ class PureI9(StateVacuumEntity):
         # times. Circumvent that.
         if self._params.state != STATE_CLEANING:
             self._robot.startclean()
-            self._override_next_state_update = self._params.state = STATE_CLEANING
+            self._params.state = STATE_CLEANING
 
     def return_to_base(self, **kwargs) -> None:
         """Return to the dock"""
@@ -143,7 +140,7 @@ class PureI9(StateVacuumEntity):
         # called multiple times. Circumvent that.
         if self._params.state != STATE_PAUSED:
             self._robot.pauseclean()
-            self._override_next_state_update = self._params.state = STATE_PAUSED
+            self._params.state = STATE_PAUSED
 
     def update(self) -> None:
         """
@@ -153,9 +150,6 @@ class PureI9(StateVacuumEntity):
         pure_i9_battery = self._robot.getbattery()
 
         self._params.battery = purei9.battery_to_hass(pure_i9_battery)
-        self._params.state = (self._override_next_state_update
-                        or purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery))
+        self._params.state = purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
         self._params.available = self._robot.isconnected()
         self._params.firmware = self._robot.getfirmware()
-
-        self._override_next_state_update = None
