@@ -84,11 +84,6 @@ class PureI9(StateVacuumEntity):
         return self._params.unique_id
 
     @property
-    def available(self) -> bool:
-        """If the robot is connected to the cloud and ready for commands"""
-        return self._params.available
-
-    @property
     def name(self) -> str:
         """Name of the vacuum"""
         return self._params.name
@@ -102,6 +97,11 @@ class PureI9(StateVacuumEntity):
     def state(self) -> str:
         """Check Home Assistant state variables"""
         return self._params.state
+
+    @property
+    def available(self) -> bool:
+        """If the robot is connected to the cloud and ready for commands"""
+        return self._params.available
 
     @property
     def error(self) -> str:
