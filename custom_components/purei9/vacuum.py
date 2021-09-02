@@ -117,6 +117,12 @@ class PureI9(StateVacuumEntity):
 
     def start(self) -> None:
         """Start cleaning"""
+        # If you click on start after clicking return, it will continue
+        # returning. So we'll need to call stop first, then start in order
+        # to start a clean.
+        if self._params.state == STATE_RETURNING:
+            self._robot.stopclean()
+
         # According to Home Assistant, pause should be an idempotent action.
         # However, the Pure i9 will toggle pause on/off if called multiple
         # times. Circumvent that.
