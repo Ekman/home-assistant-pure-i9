@@ -1,4 +1,5 @@
 """Home Assistant vacuum entity"""
+from datetime import timedelta
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant.helpers.entity import DeviceInfo
@@ -17,6 +18,17 @@ from homeassistant.components.vacuum import (
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloud import CloudClient, CloudRobot
 from . import purei9, const
+
+# The default scan interval is 15 seconds. We need
+# to balance this with a cache interval of 5 seconds
+# inside purei9_unofficial. Ie, whatever we set should
+# be divisible by 5.
+# Also, the API does not update statuses instant as well.
+# Tweak this until we feel that we have a good value
+# that updates statuses asap, but without having the fetch
+# unnecessary intermediate states
+# See: https://developers.home-assistant.io/docs/integration_fetching_data/
+SCAN_INTERVAL = timedelta(minutes=30)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
@@ -38,9 +50,6 @@ class PureI9(StateVacuumEntity):
         ):
         self._robot = robot
         self._params = params
-        # The Pure i9 library caches results. When we do state updates, the next update
-        # is sometimes cached. Override that so we can get the desired state quicker.
-        self._override_next_state_update = None
 
     @staticmethod
     def create(robot: CloudRobot):
@@ -115,7 +124,7 @@ class PureI9(StateVacuumEntity):
         # times. Circumvent that.
         if self._params.state != STATE_CLEANING:
             self._robot.startclean()
-            self._override_next_state_update = self._params.state = STATE_CLEANING
+            self._params.state = STATE_CLEANING
 
     def return_to_base(self, **kwargs) -> None:
         """Return to the dock"""
@@ -132,7 +141,7 @@ class PureI9(StateVacuumEntity):
         # called multiple times. Circumvent that.
         if self._params.state != STATE_PAUSED:
             self._robot.pauseclean()
-            self._override_next_state_update = self._params.state = STATE_PAUSED
+            self._params.state = STATE_PAUSED
 
     def update(self) -> None:
         """
@@ -142,9 +151,6 @@ class PureI9(StateVacuumEntity):
         pure_i9_battery = self._robot.getbattery()
 
         self._params.battery = purei9.battery_to_hass(pure_i9_battery)
-        self._params.state = (self._override_next_state_update
-                        or purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery))
+        self._params.state = purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
         self._params.available = self._robot.isconnected()
         self._params.firmware = self._robot.getfirmware()
-
-        self._override_next_state_update = None
