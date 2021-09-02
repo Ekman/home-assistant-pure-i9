@@ -1,5 +1,4 @@
 """Home Assistant vacuum entity"""
-from datetime import timedelta
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant.helpers.entity import DeviceInfo
@@ -113,7 +112,8 @@ class PureI9(StateVacuumEntity):
 
     @property
     def assumed_state(self) -> bool:
-        return self._assumed_next_state != None
+        """Assume the next state after sending a command"""
+        return self._assumed_next_state is not None
 
     def start(self) -> None:
         """Start cleaning"""
