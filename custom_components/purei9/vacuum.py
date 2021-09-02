@@ -9,8 +9,6 @@ from homeassistant.components.vacuum import (
     SUPPORT_START,
     SUPPORT_STATE,
     SUPPORT_STOP,
-    SUPPORT_TURN_ON,
-    SUPPORT_TURN_OFF,
     StateVacuumEntity,
     PLATFORM_SCHEMA,
     STATE_CLEANING,
@@ -55,7 +53,6 @@ class PureI9(StateVacuumEntity):
         """Explain to Home Assistant what features are implemented"""
         # Turn on, turn off and is on is not supported by vacuums anymore
         # See: https://github.com/home-assistant/core/issues/36503
-        # See: https://github.com/home-assistant/core/blob/0b442652322edc8f704ff0409dcce14735f0f9db/homeassistant/components/vacuum/__init__.py#L400
         return (
             SUPPORT_BATTERY
             | SUPPORT_START
