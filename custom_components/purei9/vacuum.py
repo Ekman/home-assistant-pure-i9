@@ -16,6 +16,7 @@ from homeassistant.components.vacuum import (
 )
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloud import CloudClient, CloudRobot
+from datetime import timedelta
 from . import purei9, const
 
 # The default scan interval is 15 minutes. We need
@@ -26,8 +27,8 @@ from . import purei9, const
 # Tweak this until we feel that we have a good value
 # that updates statuses asap, but without having the fetch
 # unnecessary intermediate states
-# See: https://developers.home-assistant.io/docs/integration_fetching_data/#separate-polling-for-each-individual-entity
-SCAN_INTERVAL = timedelta(minutes=20)
+# See: https://developers.home-assistant.io/docs/integration_fetching_data/
+SCAN_INTERVAL = timedelta(minutes=30)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
