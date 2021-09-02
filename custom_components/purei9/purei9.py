@@ -51,13 +51,7 @@ def battery_to_hass(pure_i9_battery: str) -> int:
     """Translate Pure i9 data into a Home Assistant battery level"""
     return PURE_I9_BATTERY_MAP.get(pure_i9_battery, 0)
 
-class Params:
-    """Data available in the state"""
-    battery: int = 100
-    state: str = STATE_IDLE
-    available: bool = True
-    firmware: str = None
-
+class BaseParams:
     def __init__(self, unique_id: str, name: str):
         self._unique_id = unique_id
         self._name = name
@@ -71,3 +65,14 @@ class Params:
     def name(self) -> str:
         """Immutable name"""
         return self._name
+
+class HomeAssistantVacuumParams(BaseParams):
+    """Data available in the vacuum state"""
+    battery: int = 100
+    state: str = STATE_IDLE
+    available: bool = True
+    firmware: str = None
+
+class HomeAssistantCameraParams(BaseParams):
+    """Data available in the camera state"""
+    image = None
