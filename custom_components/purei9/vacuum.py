@@ -9,6 +9,7 @@ from homeassistant.components.vacuum import (
     SUPPORT_START,
     SUPPORT_STATE,
     SUPPORT_STOP,
+    SUPPORT_MAP,
     StateVacuumEntity,
     PLATFORM_SCHEMA,
     STATE_CLEANING,
@@ -17,6 +18,9 @@ from homeassistant.components.vacuum import (
     STATE_IDLE
 )
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
+from homeassistant.core import HomeAssistant
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from purei9_unofficial.cloud import CloudClient, CloudRobot
 from . import purei9, const
 
@@ -25,19 +29,25 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_PASSWORD): cv.string
 })
 
-def setup_platform(_hass, config, add_entities,_discovery_info=None) -> None:
+def setup_platform(
+    hass: HomeAssistant, config: ConfigEntry, add_entities: AddEntitiesCallback, discovery_info=None
+) -> None:
     """Register all Pure i9's in Home Assistant"""
-    client = CloudClient(config[CONF_EMAIL], config.get(CONF_PASSWORD))
+    client = CloudClient(config[CONF_EMAIL], config[CONF_PASSWORD])
     entities = map(PureI9.create, client.getRobots())
-    add_entities(entities, update_before_add=True)
+
+    if entities:
+        add_entities(entities, update_before_add=True)
+        hass.helpers.discovery.load_platform('camera', const.DOMAIN, {}, config)
 
 class PureI9(StateVacuumEntity):
     """The main Pure i9 vacuum entity"""
     def __init__(
             self,
             robot: CloudRobot,
-            params: purei9.Params,
+            params: purei9.HomeAssistantVacuumParams,
         ):
+        super().__init__()
         self._robot = robot
         self._params = params
         # The Pure i9 library caches results. When we do state updates, the next update
@@ -47,7 +57,7 @@ class PureI9(StateVacuumEntity):
     @staticmethod
     def create(robot: CloudRobot):
         """Named constructor for creating a new instance from a CloudRobot"""
-        params = purei9.Params(robot.getid(), robot.getname())
+        params = purei9.HomeAssistantVacuumParams(robot.getid(), robot.getname())
         return PureI9(robot, params)
 
     @property
@@ -62,6 +72,7 @@ class PureI9(StateVacuumEntity):
             | SUPPORT_STOP
             | SUPPORT_PAUSE
             | SUPPORT_STATE
+            | SUPPORT_MAP
         )
 
     @property
