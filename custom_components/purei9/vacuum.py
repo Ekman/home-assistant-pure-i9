@@ -1,4 +1,5 @@
 """Home Assistant vacuum entity"""
+from datetime import timedelta
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant.helpers.entity import DeviceInfo
@@ -16,10 +17,9 @@ from homeassistant.components.vacuum import (
 )
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloud import CloudClient, CloudRobot
-from datetime import timedelta
 from . import purei9, const
 
-# The default scan interval is 15 minutes. We need
+# The default scan interval is 15 seconds. We need
 # to balance this with a cache interval of 5 seconds
 # inside purei9_unofficial. Ie, whatever we set should
 # be divisible by 5.
