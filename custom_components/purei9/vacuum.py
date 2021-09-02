@@ -18,6 +18,17 @@ from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloud import CloudClient, CloudRobot
 from . import purei9, const
 
+# The default scan interval is 15 minutes. We need
+# to balance this with a cache interval of 5 seconds
+# inside purei9_unofficial. Ie, whatever we set should
+# be divisible by 5.
+# Also, the API does not update statuses instant as well.
+# Tweak this until we feel that we have a good value
+# that updates statuses asap, but without having the fetch
+# unnecessary intermediate states
+# See: https://developers.home-assistant.io/docs/integration_fetching_data/#separate-polling-for-each-individual-entity
+SCAN_INTERVAL = timedelta(minutes=20)
+
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
     vol.Required(CONF_PASSWORD): cv.string
