@@ -43,7 +43,7 @@ class PureI9(StateVacuumEntity):
         self._params = params
         # The Pure i9 library caches results. When we do state updates, the next update
         # is sometimes cached. Override that so we can get the desired state quicker.
-        self._override_next_state_update = None
+        self._assumed_next_state = None
 
     @staticmethod
     def create(robot: CloudRobot):
@@ -113,7 +113,7 @@ class PureI9(StateVacuumEntity):
 
     @property
     def assumed_state(self) -> bool:
-        return self._override_next_state_update != None
+        return self._assumed_next_state != None
 
     def start(self) -> None:
         """Start cleaning"""
@@ -122,17 +122,17 @@ class PureI9(StateVacuumEntity):
         # times. Circumvent that.
         if self._params.state != STATE_CLEANING:
             self._robot.startclean()
-            self._override_next_state_update = self._params.state = STATE_CLEANING
+            self._assumed_next_state = STATE_CLEANING
 
     def return_to_base(self, **kwargs) -> None:
         """Return to the dock"""
         self._robot.gohome()
-        self._override_next_state_update = self._params.state = STATE_RETURNING
+        self._assumed_next_state = STATE_RETURNING
 
     def stop(self, **kwargs) -> None:
         """Stop cleaning"""
         self._robot.stopclean()
-        self._override_next_state_update = self._params.state = STATE_IDLE
+        self._assumed_next_state = STATE_IDLE
 
     def pause(self) -> None:
         """Pause cleaning"""
@@ -141,16 +141,16 @@ class PureI9(StateVacuumEntity):
         # called multiple times. Circumvent that.
         if self._params.state != STATE_PAUSED:
             self._robot.pauseclean()
-            self._override_next_state_update = self._params.state = STATE_PAUSED
+            self._assumed_next_state = STATE_PAUSED
 
     def update(self) -> None:
         """
         Called by Home Assistant asking the vacuum to update to the latest state.
         Can contain IO code.
         """
-        if self._override_next_state_update != None:
-            self._params.state = self._override_next_state_update
-            self._override_next_state_update = None
+        if self._assumed_next_state != None:
+            self._params.state = self._assumed_next_state
+            self._assumed_next_state = None
         else:
             pure_i9_battery = self._robot.getbattery()
 
