@@ -9,8 +9,6 @@ from homeassistant.components.vacuum import (
     SUPPORT_START,
     SUPPORT_STATE,
     SUPPORT_STOP,
-    SUPPORT_TURN_ON,
-    SUPPORT_TURN_OFF,
     StateVacuumEntity,
     PLATFORM_SCHEMA,
     STATE_CLEANING,
@@ -53,14 +51,14 @@ class PureI9(StateVacuumEntity):
     @property
     def supported_features(self) -> int:
         """Explain to Home Assistant what features are implemented"""
+        # Turn on, turn off and is on is not supported by vacuums anymore
+        # See: https://github.com/home-assistant/core/issues/36503
         return (
             SUPPORT_BATTERY
             | SUPPORT_START
             | SUPPORT_RETURN_HOME
             | SUPPORT_STOP
             | SUPPORT_PAUSE
-            | SUPPORT_TURN_ON
-            | SUPPORT_TURN_OFF
             | SUPPORT_STATE
         )
 
@@ -110,11 +108,6 @@ class PureI9(StateVacuumEntity):
         # can report error states. However, I can't fetch any error message.
         return "Error"
 
-    @property
-    def is_on(self) -> bool:
-        """If the vacuum is on or off"""
-        return self._params.state == STATE_CLEANING
-
     def start(self) -> None:
         """Start cleaning"""
         # According to Home Assistant, pause should be an idempotent action.
@@ -140,15 +133,6 @@ class PureI9(StateVacuumEntity):
         if self._params.state != STATE_PAUSED:
             self._robot.pauseclean()
             self._override_next_state_update = self._params.state = STATE_PAUSED
-
-    def turn_on(self) -> None:
-        """Turn the vacuum on"""
-        self.start()
-
-    def turn_off(self) -> None:
-        """Turn the vacuum off"""
-        self.stop()
-        self.return_to_base()
 
     def update(self) -> None:
         """
