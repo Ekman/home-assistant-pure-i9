@@ -1,5 +1,5 @@
 {
     "name": "Pure i9",
     "render_readme": true,
-    "domains": ["vacuum"]
+    "domains": ["vacuum", "camera"]
 }
