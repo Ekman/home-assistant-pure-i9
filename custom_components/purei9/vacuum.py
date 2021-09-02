@@ -148,7 +148,7 @@ class PureI9(StateVacuumEntity):
         Called by Home Assistant asking the vacuum to update to the latest state.
         Can contain IO code.
         """
-        if self._assumed_next_state != None:
+        if self._assumed_next_state is not None:
             self._params.state = self._assumed_next_state
             self._assumed_next_state = None
         else:
