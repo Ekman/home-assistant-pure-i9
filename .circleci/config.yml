@@ -31,10 +31,6 @@ jobs:
       - checkout
       - pip
       - run: python3 -m unittest discover --start-directory tests --verbose
-      - store_test_results:
-          path: test-results
-      - store_artifacts:
-          path: test-results
 workflows:
   purei9:
     jobs:
