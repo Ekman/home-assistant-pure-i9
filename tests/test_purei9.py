@@ -1,6 +1,5 @@
 """Test the purei9 module"""
 import unittest
-import xmlrunner
 from purei9_unofficial.common import BatteryStatus, RobotStates
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
@@ -52,4 +51,4 @@ class TestPureI9(unittest.TestCase):
         self.assertEqual(100, params.battery)
 
 if __name__ == '__main__':
-    unittest.main(testRunner=xmlrunner.XMLTestRunner(output='test-reports'))
+    unittest.main()
