@@ -24,7 +24,15 @@ jobs:
       - pip
       - run: pylint custom_components/purei9 tests
       - run: python3 -m json.tool custom_components/purei9/manifest.json
+  test:
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - pip
+      - run: python3 -m unittest
 workflows:
   purei9:
     jobs:
       - lint
+      - test
