@@ -47,7 +47,7 @@ class TestPureI9(unittest.TestCase):
 
         # No need to test every property. The test will become too fragile.
         self.assertEqual(unique_id, params.unique_id)
-        self.assertEqual("x", params.name)
+        self.assertEqual(name, params.name)
         self.assertEqual(100, params.battery)
 
 if __name__ == '__main__':
