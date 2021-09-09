@@ -30,7 +30,7 @@ jobs:
     steps:
       - checkout
       - pip
-      - run: python3 -m unittest
+      - run: python3 -m unittest --start-directory tests
 workflows:
   purei9:
     jobs:

@@ -6,7 +6,7 @@ from homeassistant.components.vacuum import (
     STATE_DOCKED,
     STATE_IDLE
 )
-from purei9
+from custom_components.purei9 import purei9
 
 class TestPureI9(unittest.TestCase):
     """Tests for the purei9 module"""
@@ -24,12 +24,12 @@ class TestPureI9(unittest.TestCase):
                 self.assertEqual(expected, purei9.state_to_hass(purei9_state, purei9_battery))
 
     data_battery_to_hass = [
-        (BatteryStatus[0], 0),
-        (BatteryStatus[1], 20),
-        (BatteryStatus[2], 40),
-        (BatteryStatus[3], 60),
-        (BatteryStatus[4], 80),
-        (BatteryStatus[5], 100)
+        (BatteryStatus[1], 0),
+        (BatteryStatus[2], 20),
+        (BatteryStatus[3], 40),
+        (BatteryStatus[4], 60),
+        (BatteryStatus[5], 80),
+        (BatteryStatus[6], 100)
     ]
 
     def test_battery_to_hass(self):
