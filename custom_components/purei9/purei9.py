@@ -51,7 +51,7 @@ def battery_to_hass(pure_i9_battery: str) -> int:
     """Translate Pure i9 data into a Home Assistant battery level"""
     return PURE_I9_BATTERY_MAP.get(pure_i9_battery, 0)
 
-# TODO Should not be specifically disabling properties.
+# Should not be specifically disabling properties.
 # Rewrite this class as a TypedDict instead.
 # pylint: disable=too-few-public-methods
 class Params:
