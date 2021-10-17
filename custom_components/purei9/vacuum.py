@@ -1,6 +1,7 @@
 """Home Assistant vacuum entity"""
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
+from typing import Any, Dict, List, Mapping, Optional
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.components.vacuum import (
     SUPPORT_BATTERY,
