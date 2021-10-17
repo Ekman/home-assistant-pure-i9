@@ -123,7 +123,6 @@ class PureI9(StateVacuumEntity):
     def fan_speed_list(self) -> List[str]:
         """Get the list of available fan speed steps of the vacuum cleaner."""
         return self._params.fan_speed_list
-        return [level.display_name for level in FanSpeedLevel]
 
     @property
     def assumed_state(self) -> bool:
