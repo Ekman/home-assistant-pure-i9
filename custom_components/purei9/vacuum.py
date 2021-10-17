@@ -17,7 +17,7 @@ from homeassistant.components.vacuum import (
     STATE_IDLE
 )
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
-from purei9_unofficial.cloud import CloudClient, CloudRobot
+from purei9_unofficial.cloudv2 import CloudClient, CloudRobot
 from . import purei9, const
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
