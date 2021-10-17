@@ -51,8 +51,12 @@ def battery_to_hass(pure_i9_battery: str) -> int:
     """Translate Pure i9 data into a Home Assistant battery level"""
     return PURE_I9_BATTERY_MAP.get(pure_i9_battery, 0)
 
+# Should not be specifically disabling properties.
+# Rewrite this class as a TypedDict instead.
+# pylint: disable=too-few-public-methods
 class Params:
     """Data available in the state"""
+    name: str
     battery: int = 100
     state: str = STATE_IDLE
     available: bool = True
@@ -60,14 +64,9 @@ class Params:
 
     def __init__(self, unique_id: str, name: str):
         self._unique_id = unique_id
-        self._name = name
+        self.name = name
 
     @property
     def unique_id(self) -> str:
         """Immutable unique identifier"""
         return self._unique_id
-
-    @property
-    def name(self) -> str:
-        """Immutable name"""
-        return self._name

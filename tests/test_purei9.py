@@ -50,5 +50,10 @@ class TestPureI9(unittest.TestCase):
         self.assertEqual(name, params.name)
         self.assertEqual(100, params.battery)
 
+        # Attempt to set a new name
+        new_name = "hello,world"
+        params.name = new_name
+        self.assertEqual(new_name, params.name)
+
 if __name__ == '__main__':
     unittest.main()

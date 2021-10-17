@@ -160,6 +160,7 @@ class PureI9(StateVacuumEntity):
         else:
             pure_i9_battery = self._robot.getbattery()
 
+            self._params.name = self._robot.getname()
             self._params.battery = purei9.battery_to_hass(pure_i9_battery)
             self._params.state = purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
             self._params.available = self._robot.isconnected()
