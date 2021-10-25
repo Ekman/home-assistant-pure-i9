@@ -47,7 +47,7 @@ class PureI9(StateVacuumEntity):
     @staticmethod
     def create(robot: CloudRobot):
         """Named constructor for creating a new instance from a CloudRobot"""
-        params = purei9.Params(robot.getid(), robot.getname())
+        params = purei9.Params(unique_id=robot.getid(), name=robot.getname())
         return PureI9(robot, params)
 
     @property
@@ -69,10 +69,10 @@ class PureI9(StateVacuumEntity):
         """Return information for the device registry"""
         # See: https://developers.home-assistant.io/docs/device_registry_index/
         return {
-            "identifiers": {(const.DOMAIN, self._params.unique_id)},
-            "name": self._params.name,
+            "identifiers": {(const.DOMAIN, self._params["unique_id"])},
+            "name": self._params["name"],
             "manufacturer": const.MANUFACTURER,
-            "sw_version": self._params.firmware,
+            "sw_version": self._params["firmware"],
             # We don't know the exact model, i.e. Pure i9 or Pure i9.2,
             # so only report a default model
             "default_model": const.MODEL
@@ -81,27 +81,27 @@ class PureI9(StateVacuumEntity):
     @property
     def unique_id(self) -> str:
         """Unique identifier to the vacuum"""
-        return self._params.unique_id
+        return self._params["unique_id"]
 
     @property
     def name(self) -> str:
         """Name of the vacuum"""
-        return self._params.name
+        return self._params["name"]
 
     @property
     def battery_level(self) -> int:
         """Battery level, between 0-100"""
-        return self._params.battery
+        return self._params["battery"]
 
     @property
     def state(self) -> str:
         """Check Home Assistant state variables"""
-        return self._params.state
+        return self._params["state"]
 
     @property
     def available(self) -> bool:
         """If the robot is connected to the cloud and ready for commands"""
-        return self._params.available
+        return self._params["available"]
 
     @property
     def error(self) -> str:
@@ -120,13 +120,13 @@ class PureI9(StateVacuumEntity):
         # If you click on start after clicking return, it will continue
         # returning. So we'll need to call stop first, then start in order
         # to start a clean.
-        if self._params.state == STATE_RETURNING:
+        if self._params["state"] == STATE_RETURNING:
             self._robot.stopclean()
 
         # According to Home Assistant, pause should be an idempotent action.
         # However, the Pure i9 will toggle pause on/off if called multiple
         # times. Circumvent that.
-        if self._params.state != STATE_CLEANING:
+        if self._params["state"] != STATE_CLEANING:
             self._robot.startclean()
             self._assumed_next_state = STATE_CLEANING
 
@@ -145,7 +145,7 @@ class PureI9(StateVacuumEntity):
         # According to Home Assistant, pause should be an idempotent
         # action. However, the Pure i9 will toggle pause on/off if
         # called multiple times. Circumvent that.
-        if self._params.state != STATE_PAUSED:
+        if self._params["state"] != STATE_PAUSED:
             self._robot.pauseclean()
             self._assumed_next_state = STATE_PAUSED
 
@@ -155,13 +155,13 @@ class PureI9(StateVacuumEntity):
         Can contain IO code.
         """
         if self._assumed_next_state is not None:
-            self._params.state = self._assumed_next_state
+            self._params["state"] = self._assumed_next_state
             self._assumed_next_state = None
         else:
             pure_i9_battery = self._robot.getbattery()
 
-            self._params.name = self._robot.getname()
-            self._params.battery = purei9.battery_to_hass(pure_i9_battery)
-            self._params.state = purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
-            self._params.available = self._robot.isconnected()
-            self._params.firmware = self._robot.getfirmware()
+            self._params["name"] = self._robot.getname()
+            self._params["battery"] = purei9.battery_to_hass(pure_i9_battery)
+            self._params["state"] = purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
+            self._params["available"] = self._robot.isconnected()
+            self._params["firmware"] = self._robot.getfirmware()

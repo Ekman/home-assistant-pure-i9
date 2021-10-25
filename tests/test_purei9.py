@@ -43,17 +43,17 @@ class TestPureI9(unittest.TestCase):
         unique_id = "bar"
         name = "foo"
 
-        params = purei9.Params(unique_id, name)
+        params = purei9.Params(unique_id=unique_id, name=name)
 
         # No need to test every property. The test will become too fragile.
-        self.assertEqual(unique_id, params.unique_id)
-        self.assertEqual(name, params.name)
-        self.assertEqual(100, params.battery)
+        self.assertEqual(unique_id, params["unique_id"])
+        self.assertEqual(name, params["name"])
+        self.assertEqual(100, params["battery"])
 
         # Attempt to set a new name
         new_name = "hello,world"
         params.name = new_name
-        self.assertEqual(new_name, params.name)
+        self.assertEqual(new_name, params["name"])
 
 if __name__ == '__main__':
     unittest.main()

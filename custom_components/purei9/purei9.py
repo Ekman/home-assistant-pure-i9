@@ -8,6 +8,7 @@ from homeassistant.components.vacuum import (
     STATE_PAUSED,
     STATE_RETURNING
 )
+from typing import TypedDict
 
 # See: https://github.com/Phype/purei9_unofficial/blob/master/src/purei9_unofficial/common.py
 PURE_I9_STATE_MAP = {
@@ -54,19 +55,11 @@ def battery_to_hass(pure_i9_battery: str) -> int:
 # Should not be specifically disabling properties.
 # Rewrite this class as a TypedDict instead.
 # pylint: disable=too-few-public-methods
-class Params:
+class Params(TypedDict):
     """Data available in the state"""
+    unique_id: str
     name: str
     battery: int = 100
     state: str = STATE_IDLE
     available: bool = True
     firmware: str = None
-
-    def __init__(self, unique_id: str, name: str):
-        self._unique_id = unique_id
-        self.name = name
-
-    @property
-    def unique_id(self) -> str:
-        """Immutable unique identifier"""
-        return self._unique_id
