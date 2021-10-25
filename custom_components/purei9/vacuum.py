@@ -1,7 +1,7 @@
 """Home Assistant vacuum entity"""
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
-from typing import List, Optional
+from typing import List, Optional, Any
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.components.vacuum import (
     SUPPORT_BATTERY,
@@ -50,7 +50,7 @@ class PureI9(StateVacuumEntity):
     @staticmethod
     def create(robot: CloudRobot):
         """Named constructor for creating a new instance from a CloudRobot"""
-        fan_speed_list = list(map(lambda x: x.name, self._robot.getsupportedpowermodes()))
+        fan_speed_list = list(map(lambda x: x.name, robot.getsupportedpowermodes()))
         params = purei9.Params(robot.getid(), robot.getname(), fan_speed_list)
         return PureI9(robot, params)
 
