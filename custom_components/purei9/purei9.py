@@ -1,5 +1,6 @@
 """Pure i9 business logic"""
 from purei9_unofficial.common import BatteryStatus, RobotStates
+from typing import TypedDict
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
     STATE_DOCKED,
@@ -8,7 +9,6 @@ from homeassistant.components.vacuum import (
     STATE_PAUSED,
     STATE_RETURNING
 )
-from typing import TypedDict
 
 # See: https://github.com/Phype/purei9_unofficial/blob/master/src/purei9_unofficial/common.py
 PURE_I9_STATE_MAP = {
