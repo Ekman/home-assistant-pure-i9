@@ -47,7 +47,7 @@ class PureI9(StateVacuumEntity):
     @staticmethod
     def create(robot: CloudRobot):
         """Named constructor for creating a new instance from a CloudRobot"""
-        params = purei9.Params(unique_id=robot.getid(), name=robot.getname())
+        params = purei9.Params.create(robot.getid(), robot.getname())
         return PureI9(robot, params)
 
     @property

@@ -59,7 +59,18 @@ class Params(TypedDict):
     """Data available in the state"""
     unique_id: str
     name: str
-    battery: int = 100
-    state: str = STATE_IDLE
-    available: bool = True
-    firmware: str = None
+    battery: int
+    state: str
+    available: bool
+    firmware: str
+
+    @staticmethod
+    def create(unique_id: str, name: str) -> Params:
+        return {
+            "unique_id": unique_id,
+            "name": name,
+            "battery": 100,
+            "state": STATE_IDLE,
+            "available": True,
+            "firmware": None
+        }
