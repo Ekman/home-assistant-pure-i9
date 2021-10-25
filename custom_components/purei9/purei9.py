@@ -1,5 +1,5 @@
 """Pure i9 business logic"""
-from typing import Any, Dict, List, Mapping, Optional
+from typing import List
 from purei9_unofficial.common import BatteryStatus, RobotStates
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
