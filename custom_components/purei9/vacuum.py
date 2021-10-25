@@ -50,7 +50,8 @@ class PureI9(StateVacuumEntity):
     @staticmethod
     def create(robot: CloudRobot):
         """Named constructor for creating a new instance from a CloudRobot"""
-        params = purei9.Params(robot.getid(), robot.getname())
+        fan_speed_list = list(map(lambda x: x.name, self._robot.getsupportedpowermodes()))
+        params = purei9.Params(robot.getid(), robot.getname(), fan_speed_list)
         return PureI9(robot, params)
 
     @property
@@ -182,6 +183,4 @@ class PureI9(StateVacuumEntity):
             self._params.state = purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
             self._params.available = self._robot.isconnected()
             self._params.firmware = self._robot.getfirmware()
-
-            self._params.fan_speed_list = list(map(lambda x: x.name, self._robot.getsupportedpowermodes()))
             self._params.fan_speed = self._robot.getpowermode().name

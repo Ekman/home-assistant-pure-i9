@@ -65,9 +65,10 @@ class Params:
     fan_speed: str = None
     fan_speed_list: List[str] = None
 
-    def __init__(self, unique_id: str, name: str):
+    def __init__(self, unique_id: str, name: str, fan_speed_list: List[str]):
         self._unique_id = unique_id
         self.name = name
+        self.fan_speed_list = fan_speed_list
 
     @property
     def unique_id(self) -> str:
