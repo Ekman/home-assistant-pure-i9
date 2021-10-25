@@ -1,6 +1,6 @@
 """Pure i9 business logic"""
-from purei9_unofficial.common import BatteryStatus, RobotStates
 from typing import TypedDict
+from purei9_unofficial.common import BatteryStatus, RobotStates
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
     STATE_DOCKED,
