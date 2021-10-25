@@ -1,4 +1,5 @@
 """Pure i9 business logic"""
+from typing import Any, Dict, List, Mapping, Optional
 from purei9_unofficial.common import BatteryStatus, RobotStates
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
@@ -61,6 +62,8 @@ class Params:
     state: str = STATE_IDLE
     available: bool = True
     firmware: str = None
+    fan_speed: str = None
+    fan_speed_list: List[str] = None
 
     def __init__(self, unique_id: str, name: str):
         self._unique_id = unique_id

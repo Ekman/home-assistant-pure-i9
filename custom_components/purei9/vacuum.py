@@ -1,6 +1,7 @@
 """Home Assistant vacuum entity"""
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
+from typing import Any, Dict, List, Mapping, Optional
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.components.vacuum import (
     SUPPORT_BATTERY,
@@ -9,6 +10,7 @@ from homeassistant.components.vacuum import (
     SUPPORT_START,
     SUPPORT_STATE,
     SUPPORT_STOP,
+    SUPPORT_FAN_SPEED,
     StateVacuumEntity,
     PLATFORM_SCHEMA,
     STATE_CLEANING,
@@ -18,6 +20,7 @@ from homeassistant.components.vacuum import (
 )
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloudv2 import CloudClient, CloudRobot
+from purei9_unofficial.common import PowerMode
 from . import purei9, const
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
@@ -62,6 +65,7 @@ class PureI9(StateVacuumEntity):
             | SUPPORT_STOP
             | SUPPORT_PAUSE
             | SUPPORT_STATE
+            | SUPPORT_FAN_SPEED
         )
 
     @property
@@ -111,6 +115,16 @@ class PureI9(StateVacuumEntity):
         return "Error"
 
     @property
+    def fan_speed(self) -> Optional[str]:
+        """Return the fan speed of the vacuum cleaner."""
+        return self._params.fan_speed
+
+    @property
+    def fan_speed_list(self) -> List[str]:
+        """Get the list of available fan speed steps of the vacuum cleaner."""
+        return self._params.fan_speed_list
+
+    @property
     def assumed_state(self) -> bool:
         """Assume the next state after sending a command"""
         return self._assumed_next_state is not None
@@ -149,6 +163,9 @@ class PureI9(StateVacuumEntity):
             self._robot.pauseclean()
             self._assumed_next_state = STATE_PAUSED
 
+    def set_fan_speed(self, fan_speed: str, **kwargs: Any) -> None:
+        self._robot.setpowermode( PowerMode[fan_speed] )
+
     def update(self) -> None:
         """
         Called by Home Assistant asking the vacuum to update to the latest state.
@@ -165,3 +182,6 @@ class PureI9(StateVacuumEntity):
             self._params.state = purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
             self._params.available = self._robot.isconnected()
             self._params.firmware = self._robot.getfirmware()
+
+            self._params.fan_speed_list = list(map(lambda x: x.name, self._robot.getsupportedpowermodes()))
+            self._params.fan_speed = self._robot.getpowermode().name
