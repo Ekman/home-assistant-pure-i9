@@ -51,7 +51,7 @@ class PureI9(StateVacuumEntity):
     def create(robot: CloudRobot):
         """Named constructor for creating a new instance from a CloudRobot"""
         fan_speed_list = list(map(lambda x: x.name, robot.getsupportedpowermodes()))
-        params = purei9.Params(robot.getid(), robot.getname(), fan_speed_list)
+        params = purei9.Params(robot.getid(), fan_speed_list)
         return PureI9(robot, params)
 
     @property
@@ -165,7 +165,8 @@ class PureI9(StateVacuumEntity):
             self._assumed_next_state = STATE_PAUSED
 
     def set_fan_speed(self, fan_speed: str, **kwargs: Any) -> None:
-        self._robot.setpowermode( PowerMode[fan_speed] )
+        """Set the fan speed of the robot"""
+        self._params.fan_speed = fan_speed
 
     def update(self) -> None:
         """
@@ -177,6 +178,8 @@ class PureI9(StateVacuumEntity):
             self._assumed_next_state = None
         else:
             pure_i9_battery = self._robot.getbattery()
+
+            self._robot.setpowermode(PowerMode[self._params.fan_speed])
 
             self._params.name = self._robot.getname()
             self._params.battery = purei9.battery_to_hass(pure_i9_battery)
