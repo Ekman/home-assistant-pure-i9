@@ -1,6 +1,7 @@
 """Test the purei9 module"""
+from typing import List
 import unittest
-from purei9_unofficial.common import BatteryStatus, RobotStates
+from purei9_unofficial.common import BatteryStatus, RobotStates, PowerMode
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
     STATE_DOCKED,
@@ -43,7 +44,7 @@ class TestPureI9(unittest.TestCase):
         unique_id = "bar"
         name = "foo"
 
-        params = purei9.Params(unique_id, name)
+        params = purei9.Params(unique_id, List([PowerMode.MEDIUM])
 
         # No need to test every property. The test will become too fragile.
         self.assertEqual(unique_id, params.unique_id)
