@@ -51,7 +51,7 @@ class PureI9(StateVacuumEntity):
     def create(robot: CloudRobot):
         """Named constructor for creating a new instance from a CloudRobot"""
         fan_speed_list = List(map(lambda x: x.name, robot.getsupportedpowermodes()))
-        params = purei9.Params(robot.getid(), fan_speed_list)
+        params = purei9.Params(robot.getid(), robot.getname(), fan_speed_list)
         return PureI9(robot, params)
 
     @property

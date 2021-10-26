@@ -44,7 +44,7 @@ class TestPureI9(unittest.TestCase):
         unique_id = "bar"
         name = "foo"
 
-        params = purei9.Params(unique_id, List([PowerMode.MEDIUM.name]))
+        params = purei9.Params(unique_id, name, List([PowerMode.MEDIUM.name]))
 
         # No need to test every property. The test will become too fragile.
         self.assertEqual(unique_id, params.unique_id)

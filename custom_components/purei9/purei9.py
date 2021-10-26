@@ -57,15 +57,16 @@ def battery_to_hass(pure_i9_battery: str) -> int:
 # pylint: disable=too-few-public-methods
 class Params:
     """Data available in the state"""
-    name: str = None
+    name: str
     battery: int = 100
     state: str = STATE_IDLE
     available: bool = True
     firmware: str = None
     fan_speed: str = PowerMode.MEDIUM.name
 
-    def __init__(self, unique_id: str, fan_speed_list: List[str]):
+    def __init__(self, unique_id: str, name: str, fan_speed_list: List[str]):
         self._unique_id = unique_id
+        self.name = name
         self._fan_speed_list = fan_speed_list
 
     @property
