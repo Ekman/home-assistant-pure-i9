@@ -1,5 +1,6 @@
 """Pure i9 business logic"""
-from purei9_unofficial.common import BatteryStatus, RobotStates
+from typing import List
+from purei9_unofficial.common import BatteryStatus, RobotStates, PowerMode
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
     STATE_DOCKED,
@@ -61,12 +62,19 @@ class Params:
     state: str = STATE_IDLE
     available: bool = True
     firmware: str = None
+    fan_speed: str = PowerMode.MEDIUM.name
 
-    def __init__(self, unique_id: str, name: str):
+    def __init__(self, unique_id: str, name: str, fan_speed_list: List[str]):
         self._unique_id = unique_id
         self.name = name
+        self._fan_speed_list = fan_speed_list
 
     @property
     def unique_id(self) -> str:
         """Immutable unique identifier"""
         return self._unique_id
+
+    @property
+    def fan_speed_list(self) -> str:
+        """Immutable fan speed list"""
+        return self._fan_speed_list
