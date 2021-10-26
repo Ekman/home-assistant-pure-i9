@@ -1,5 +1,4 @@
 """Test the purei9 module"""
-from typing import List
 import unittest
 from purei9_unofficial.common import BatteryStatus, RobotStates, PowerMode
 from homeassistant.components.vacuum import (
