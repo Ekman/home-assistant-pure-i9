@@ -63,7 +63,6 @@ class Params:
     available: bool = True
     firmware: str = None
     fan_speed: str = PowerMode.MEDIUM.name
-    _fan_speed_list: List[str] = None
 
     def __init__(self, unique_id: str, fan_speed_list: List[str]):
         self._unique_id = unique_id
