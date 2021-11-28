@@ -10,3 +10,4 @@ services:
     tmpfs:
       - /tmp
       - /home/purei9/.cache
+      - /home/purei9/.local
