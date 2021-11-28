@@ -1,8 +1,8 @@
 """Home Assistant vacuum entity"""
 from typing import List, Optional, Any
+from datetime import timedelta
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
-from datetime import timedelta
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.components.vacuum import (
     SUPPORT_BATTERY,
