@@ -48,8 +48,7 @@ class PureI9(StateVacuumEntity):
         # The Pure i9 library caches results. When we do state updates, the next update
         # is sometimes cached. Override that so we can get the desired state quicker.
         self._assumed_next_state = None
-        # Used to save a fan speed switch
-        self._next_fan_speed: str = None
+        self._assumed_next_fan_speed = None
 
     @staticmethod
     def create(robot: CloudRobot):
@@ -135,6 +134,7 @@ class PureI9(StateVacuumEntity):
     def assumed_state(self) -> bool:
         """Assume the next state after sending a command"""
         return self._assumed_next_state is not None
+            or self._assumed_next_fan_speed is not None
 
     def start(self) -> None:
         """Start cleaning"""
@@ -172,7 +172,8 @@ class PureI9(StateVacuumEntity):
 
     def set_fan_speed(self, fan_speed: str, **kwargs: Any) -> None:
         """Set the fan speed of the robot"""
-        self._next_fan_speed = fan_speed.upper()
+        self._robot.setpowermode(purei9.fan_speed_to_purei9(fan_speed))
+        self._assumed_next_fan_speed = fan_speed
 
     def update(self) -> None:
         """
@@ -187,12 +188,10 @@ class PureI9(StateVacuumEntity):
         else:
             self._params.state = purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
 
-        if self._next_fan_speed is not None:
-            self._robot.setpowermode(purei9.fan_speed_to_purei9(self._next_fan_speed))
-            self._params.fan_speed = self._next_fan_speed
-            self._next_fan_speed = None
+        if self._assumed_next_fan_speed is not None:
+            self._params.fan_speed = self._assumed_next_fan_speed
+            self._assumed_next_fan_speed = None
         else:
-            # Do not get the fan speed if we just updated. We might fetch an older value.
             self._params.fan_speed = purei9.fan_speed_to_hass(
                 self._params.fan_speed_list, self._robot.getpowermode())
 
