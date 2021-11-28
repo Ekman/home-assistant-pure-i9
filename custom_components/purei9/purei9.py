@@ -1,6 +1,6 @@
 """Pure i9 business logic"""
 from typing import List
-from purei9_unofficial.common import BatteryStatus, RobotStates, PowerMode
+from purei9_unofficial.common import BatteryStatus, RobotStates, PowerMode, DustbinStates
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
     STATE_DOCKED,
@@ -28,11 +28,18 @@ PURE_I9_STATE_MAP = {
     RobotStates.Firmware_Upgrade: STATE_DOCKED
 }
 
-def state_to_hass(pure_i9_state: str, pure_i9_battery: str) -> str:
+def state_to_hass(
+    pure_i9_state: str,
+    pure_i9_battery: str,
+    purei9_dustbin: DustbinStates=DustbinStates.connected
+    ) -> str:
     """Translate Pure i9 data into a Home Assistant state constant"""
     # The Pure i9 will become "Sleeping" when docked and charged 100% OR when stopped.
     # In order to detect if it's docket or if it's just idling in the middle of a room
     # check the battery level. If it's full then we're docked.
+    if purei9_dustbin in (DustbinStates.empty, DustbinStates.full):
+        return STATE_ERROR
+
     if pure_i9_state == RobotStates.Sleeping:
         return STATE_DOCKED if pure_i9_battery == BatteryStatus.High else STATE_IDLE
 
@@ -64,6 +71,7 @@ class Params:
     available: bool = True
     firmware: str = None
     fan_speed: str = POWER_MODE_POWER
+    dustbin: DustbinStates = DustbinStates.connected
 
     def __init__(self, unique_id: str, name: str, fan_speed_list: List[str]):
         self._unique_id = unique_id
