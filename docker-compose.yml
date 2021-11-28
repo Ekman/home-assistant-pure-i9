@@ -3,8 +3,10 @@ services:
   purei9:
     build:
       context: .
-    volumes: [ "./:/files:ro" ]
+    volumes: [ "./:/home/purei9/files:ro" ]
     tty: true
     stdin_open: true
     read_only: true
-    tmpfs: [ /tmp ]
+    tmpfs:
+      - /tmp
+      - /home/purei9/.cache
