@@ -1,5 +1,6 @@
 """Pure i9 business logic"""
 from typing import List
+from enum import Enum
 from purei9_unofficial.common import BatteryStatus, RobotStates, PowerMode
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
@@ -74,3 +75,27 @@ class Params:
     def fan_speed_list(self) -> str:
         """Immutable fan speed list"""
         return self._fan_speed_list
+
+class PowerModes(Enum):
+    ECO = "eco"
+    POWER = "power"
+    QUIET = "quiet"
+    SMART = "smart"
+
+def is_power_mode_v2(fan_speed_list: List[str]) -> bool:
+    """Determine if the robot supports the new or old fan speed list """
+    return len(fan_speed_list) == 3
+
+def fan_speed_list_to_hass(fan_speed_list_purei9: List[str]) -> List[PowerModes]:
+    """Convert the fan speed list to internal representation"""
+    return list([PowerModes.QUIET, PowerModes.SMART, PowerModes.POWER] if is_power_mode_v2(fan_speed_list_purei9) else [PowerModes.ECO, PowerModes.POWER])
+
+def fan_speed_list_to_purei9(fan_speed_hass: PowerModes) -> List[str]:
+    if fan_speed_hass == PowerModes.POWER:
+        return PowerMode.HIGH
+
+    if fan_speed_hass == PowerModes.SMART:
+        return PowerMode.MEDIUM
+
+    return PowerMode.LOW
+
