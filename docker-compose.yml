@@ -1,0 +1,10 @@
+version: "3"
+services:
+  purei9:
+    build:
+      context: .
+    volumes: [ "./:/files:ro" ]
+    tty: true
+    stdin_open: true
+    read_only: true
+    tmpfs: [ /tmp ]

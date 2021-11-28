@@ -5,7 +5,7 @@
 # See: https://community.home-assistant.io/t/error-when-trying-to-run-ha-snapshots-new-over-ssh/297808/3
 #
 
-HASS_HOST=${HASS_HOST:-$1}
+HASS_HOST=${1:-"$HASS_HOST"}
 
 scp -r custom_components/purei9/* "root@$HASS_HOST:~/config/custom_components/purei9" \
     && ssh "root@$HASS_HOST" 'source /etc/profile.d/homeassistant.sh && ha core restart' 1> /dev/null
