@@ -109,8 +109,7 @@ def fan_speed_to_hass(fan_speed_list: List[str], fan_speed_purei9: PowerMode) ->
 
         if fan_speed_purei9 == PowerMode.MEDIUM:
             return POWER_MODE_SMART
-
-    if fan_speed_purei9 == PowerMode.MEDIUM:
+    else if fan_speed_purei9 == PowerMode.MEDIUM:
         return POWER_MODE_ECO
 
     return POWER_MODE_POWER
