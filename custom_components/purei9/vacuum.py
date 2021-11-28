@@ -20,7 +20,6 @@ from homeassistant.components.vacuum import (
 )
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloudv2 import CloudClient, CloudRobot
-from purei9_unofficial.common import PowerMode
 from . import purei9, const
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
@@ -46,11 +45,15 @@ class PureI9(StateVacuumEntity):
         # The Pure i9 library caches results. When we do state updates, the next update
         # is sometimes cached. Override that so we can get the desired state quicker.
         self._assumed_next_state = None
+        # Used to save a fan speed switch
+        self._next_fan_speed: str = None
 
     @staticmethod
     def create(robot: CloudRobot):
         """Named constructor for creating a new instance from a CloudRobot"""
-        fan_speed_list = list(map(lambda x: x.name, robot.getsupportedpowermodes()))
+        purei9_fan_speed_list = list(map(lambda x: x.name, robot.getsupportedpowermodes()))
+        fan_speed_list = purei9.fan_speed_list_to_hass(purei9_fan_speed_list)
+
         params = purei9.Params(robot.getid(), robot.getname(), fan_speed_list)
         return PureI9(robot, params)
 
@@ -166,24 +169,31 @@ class PureI9(StateVacuumEntity):
 
     def set_fan_speed(self, fan_speed: str, **kwargs: Any) -> None:
         """Set the fan speed of the robot"""
-        self._params.fan_speed = fan_speed
+        self._next_fan_speed = fan_speed.upper()
 
     def update(self) -> None:
         """
         Called by Home Assistant asking the vacuum to update to the latest state.
         Can contain IO code.
         """
+        pure_i9_battery = self._robot.getbattery()
+
         if self._assumed_next_state is not None:
             self._params.state = self._assumed_next_state
             self._assumed_next_state = None
         else:
-            pure_i9_battery = self._robot.getbattery()
-
-            self._robot.setpowermode(PowerMode[self._params.fan_speed])
-
-            self._params.name = self._robot.getname()
-            self._params.battery = purei9.battery_to_hass(pure_i9_battery)
             self._params.state = purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
-            self._params.available = self._robot.isconnected()
-            self._params.firmware = self._robot.getfirmware()
-            self._params.fan_speed = self._robot.getpowermode().name
+
+        if self._next_fan_speed is not None:
+            self._robot.setpowermode(purei9.fan_speed_to_purei9(self._next_fan_speed))
+            self._params.fan_speed = self._next_fan_speed
+            self._next_fan_speed = None
+        else:
+            # Do not get the fan speed if we just updated. We might fetch an older value.
+            self._params.fan_speed = purei9.fan_speed_to_hass(
+                self._params.fan_speed_list, self._robot.getpowermode())
+
+        self._params.name = self._robot.getname()
+        self._params.battery = purei9.battery_to_hass(pure_i9_battery)
+        self._params.available = self._robot.isconnected()
+        self._params.firmware = self._robot.getfirmware()

@@ -55,5 +55,59 @@ class TestPureI9(unittest.TestCase):
         params.name = new_name
         self.assertEqual(new_name, params.name)
 
+    data_is_power_mode_v2 = [
+        (list([1, 2, 3]), True),
+        (list([1, 2]), False),
+    ]
+
+    def test_is_power_mode_v2(self):
+        """Test if the power mode is v2 or not"""
+        for fan_speed_list, expected in self.data_is_power_mode_v2:
+            with self.subTest():
+                self.assertEqual(expected, purei9.is_power_mode_v2(fan_speed_list))
+
+    data_fan_speed_list_to_hass = [
+        (
+            list([PowerMode.LOW, PowerMode.HIGH]),
+            list([purei9.POWER_MODE_ECO, purei9.POWER_MODE_POWER])
+        ),
+        (
+            list([PowerMode.LOW, PowerMode.MEDIUM, PowerMode.HIGH]),
+            list([purei9.POWER_MODE_QUIET, purei9.POWER_MODE_SMART, purei9.POWER_MODE_POWER])
+        ),
+    ]
+
+    def test_fan_speed_list_to_hass(self):
+        """Test to convert the fan speed list to a format used by the integration"""
+        for fan_speed_list, expected in self.data_fan_speed_list_to_hass:
+            with self.subTest():
+                self.assertEqual(expected, purei9.fan_speed_list_to_hass(fan_speed_list))
+
+    data_fan_speed_to_purei9 = [
+        (purei9.POWER_MODE_ECO, PowerMode.MEDIUM),
+        (purei9.POWER_MODE_QUIET, PowerMode.LOW),
+        (purei9.POWER_MODE_SMART, PowerMode.MEDIUM),
+        (purei9.POWER_MODE_POWER, PowerMode.HIGH),
+    ]
+
+    def test_fan_speed_to_purei9(self):
+        """Test to convert a fan speed value back to Purei9 integration format"""
+        for fan_speed, expected in self.data_fan_speed_to_purei9:
+            with self.subTest():
+                self.assertEqual(expected, purei9.fan_speed_to_purei9(fan_speed))
+
+    data_fan_speed_to_hass = [
+        (list([1, 2]), PowerMode.MEDIUM, purei9.POWER_MODE_ECO),
+        (list([1, 2, 3]), PowerMode.LOW, purei9.POWER_MODE_QUIET),
+        (list([1, 2, 3]), PowerMode.MEDIUM, purei9.POWER_MODE_SMART),
+        (list([1, 2]), PowerMode.HIGH, purei9.POWER_MODE_POWER),
+    ]
+
+    def test_fan_speed_to_hass(self):
+        """Test to convert a fan speed value back to Purei9 integration format"""
+        for fan_speed_list, fan_speed, expected in self.data_fan_speed_to_hass:
+            with self.subTest():
+                self.assertEqual(expected, purei9.fan_speed_to_hass(fan_speed_list, fan_speed))
+
 if __name__ == '__main__':
     unittest.main()

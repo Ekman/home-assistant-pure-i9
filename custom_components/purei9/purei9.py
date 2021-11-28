@@ -52,17 +52,18 @@ def battery_to_hass(pure_i9_battery: str) -> int:
     """Translate Pure i9 data into a Home Assistant battery level"""
     return PURE_I9_BATTERY_MAP.get(pure_i9_battery, 0)
 
-# Should not be specifically disabling properties.
-# Rewrite this class as a TypedDict instead.
-# pylint: disable=too-few-public-methods
+POWER_MODE_ECO = "ECO"
+POWER_MODE_POWER = "POWER"
+POWER_MODE_QUIET = "QUIET"
+POWER_MODE_SMART = "SMART"
+
 class Params:
     """Data available in the state"""
-    name: str
     battery: int = 100
     state: str = STATE_IDLE
     available: bool = True
     firmware: str = None
-    fan_speed: str = PowerMode.MEDIUM.name
+    fan_speed: str = POWER_MODE_POWER
 
     def __init__(self, unique_id: str, name: str, fan_speed_list: List[str]):
         self._unique_id = unique_id
@@ -78,3 +79,37 @@ class Params:
     def fan_speed_list(self) -> str:
         """Immutable fan speed list"""
         return self._fan_speed_list
+
+def is_power_mode_v2(fan_speed_list: List[str]) -> bool:
+    """Determine if the robot supports the new or old fan speed list """
+    return len(fan_speed_list) == 3
+
+def fan_speed_list_to_hass(fan_speed_list_purei9: List[str]) -> List[str]:
+    """Convert the fan speed list to internal representation"""
+    if is_power_mode_v2(fan_speed_list_purei9):
+        return list([POWER_MODE_QUIET, POWER_MODE_SMART, POWER_MODE_POWER])
+
+    return list([POWER_MODE_ECO, POWER_MODE_POWER])
+
+def fan_speed_to_purei9(fan_speed_hass: str) -> PowerMode:
+    """Convert our internal representation of a fan speed to one that Purei9 can understand"""
+    if fan_speed_hass == POWER_MODE_POWER:
+        return PowerMode.HIGH
+
+    if fan_speed_hass == POWER_MODE_QUIET:
+        return PowerMode.LOW
+
+    return PowerMode.MEDIUM
+
+def fan_speed_to_hass(fan_speed_list: List[str], fan_speed_purei9: PowerMode) -> str:
+    """Convert Purei9 fan sped to our internal representation"""
+    if is_power_mode_v2(fan_speed_list):
+        if fan_speed_purei9 == PowerMode.LOW:
+            return POWER_MODE_QUIET
+
+        if fan_speed_purei9 == PowerMode.MEDIUM:
+            return POWER_MODE_SMART
+    elif fan_speed_purei9 == PowerMode.MEDIUM:
+        return POWER_MODE_ECO
+
+    return POWER_MODE_POWER
