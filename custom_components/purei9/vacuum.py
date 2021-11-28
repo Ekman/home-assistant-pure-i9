@@ -1,5 +1,5 @@
 """Home Assistant vacuum entity"""
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Mapping
 from datetime import timedelta
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
@@ -142,6 +142,10 @@ class PureI9(StateVacuumEntity):
     def assumed_state(self) -> bool:
         """Assume the next state after sending a command"""
         return self._assumed_next_state is not None
+
+    @property
+    def extra_state_attributes(self) -> Mapping[str, Any]:
+        return {"dustbin": self._params.dustbin.name}
 
     def start(self) -> None:
         """Start cleaning"""
