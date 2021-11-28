@@ -133,8 +133,8 @@ class PureI9(StateVacuumEntity):
     @property
     def assumed_state(self) -> bool:
         """Assume the next state after sending a command"""
-        return self._assumed_next_state is not None
-            or self._assumed_next_fan_speed is not None
+        return (self._assumed_next_state is not None
+            or self._assumed_next_fan_speed is not None)
 
     def start(self) -> None:
         """Start cleaning"""
