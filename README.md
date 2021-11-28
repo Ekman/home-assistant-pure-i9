@@ -25,8 +25,8 @@ Install using [Home Assistant Community Store (HACS)](https://hacs.xyz/).
 
 **Once HACS is installed on your Home Assistance** then follow these steps:
 
-1. Add `https://github.com/Ekman/home-assistant-pure-i9` as a [custom repository in `HACS`](https://hacs.xyz/docs/faq/custom_repositories/)
-2. Install `Pure i9` using `HACS`
+1. Add `https://github.com/Ekman/home-assistant-pure-i9` as a [custom repository in HACS](https://hacs.xyz/docs/faq/custom_repositories/)
+2. Install `Pure i9` using HACS
 3. Reboot Home Assistant
 
 ## Configuration
