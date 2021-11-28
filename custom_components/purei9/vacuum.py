@@ -2,6 +2,7 @@
 from typing import List, Optional, Any
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
+from datetime import timedelta
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.components.vacuum import (
     SUPPORT_BATTERY,
@@ -26,6 +27,8 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
     vol.Required(CONF_PASSWORD): cv.string
 })
+
+SCAN_INTERVAL = timedelta(minutes=1)
 
 def setup_platform(_hass, config, add_entities,_discovery_info=None) -> None:
     """Register all Pure i9's in Home Assistant"""
