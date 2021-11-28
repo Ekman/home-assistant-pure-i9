@@ -1,6 +1,5 @@
 """Pure i9 business logic"""
 from typing import List
-from enum import Enum
 from purei9_unofficial.common import BatteryStatus, RobotStates, PowerMode
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
@@ -53,13 +52,18 @@ def battery_to_hass(pure_i9_battery: str) -> int:
     """Translate Pure i9 data into a Home Assistant battery level"""
     return PURE_I9_BATTERY_MAP.get(pure_i9_battery, 0)
 
+POWER_MODE_ECO = "ECO"
+POWER_MODE_POWER = "POWER"
+POWER_MODE_QUIET = "QUIET"
+POWER_MODE_SMART = "SMART"
+
 class Params:
     """Data available in the state"""
     battery: int = 100
     state: str = STATE_IDLE
     available: bool = True
     firmware: str = None
-    fan_speed: str = PowerMode.MEDIUM.name
+    fan_speed: str = POWER_MODE_POWER
 
     def __init__(self, unique_id: str, name: str, fan_speed_list: List[str]):
         self._unique_id = unique_id
@@ -76,26 +80,37 @@ class Params:
         """Immutable fan speed list"""
         return self._fan_speed_list
 
-class PowerModes(Enum):
-    ECO = "eco"
-    POWER = "power"
-    QUIET = "quiet"
-    SMART = "smart"
-
 def is_power_mode_v2(fan_speed_list: List[str]) -> bool:
     """Determine if the robot supports the new or old fan speed list """
     return len(fan_speed_list) == 3
 
-def fan_speed_list_to_hass(fan_speed_list_purei9: List[str]) -> List[PowerModes]:
+def fan_speed_list_to_hass(fan_speed_list_purei9: List[str]) -> List[str]:
     """Convert the fan speed list to internal representation"""
-    return list([PowerModes.QUIET, PowerModes.SMART, PowerModes.POWER] if is_power_mode_v2(fan_speed_list_purei9) else [PowerModes.ECO, PowerModes.POWER])
+    if is_power_mode_v2(fan_speed_list_purei9):
+        return list([POWER_MODE_QUIET, POWER_MODE_SMART, POWER_MODE_POWER])
 
-def fan_speed_list_to_purei9(fan_speed_hass: PowerModes) -> List[str]:
-    if fan_speed_hass == PowerModes.POWER:
+    return list([POWER_MODE_ECO, POWER_MODE_POWER])
+
+def fan_speed_to_purei9(fan_speed_hass: str) -> PowerMode:
+    """Convert our internal representation of a fan speed to one that Purei9 can understand"""
+    if fan_speed_hass == POWER_MODE_POWER:
         return PowerMode.HIGH
 
-    if fan_speed_hass == PowerModes.SMART:
-        return PowerMode.MEDIUM
+    if fan_speed_hass == POWER_MODE_QUIET:
+        return PowerMode.LOW
 
-    return PowerMode.LOW
+    return PowerMode.MEDIUM
 
+def fan_speed_to_hass(fan_speed_list: List[str], fan_speed_purei9: PowerMode) -> str:
+    """Convert Purei9 fan sped to our internal representation"""
+    if is_power_mode_v2(fan_speed_list):
+        if fan_speed_purei9 == PowerMode.LOW:
+            return POWER_MODE_QUIET
+
+        if fan_speed_purei9 == PowerMode.MEDIUM:
+            return POWER_MODE_SMART
+
+    if fan_speed_purei9 == PowerMode.MEDIUM:
+        return POWER_MODE_ECO
+
+    return POWER_MODE_POWER
