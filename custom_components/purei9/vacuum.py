@@ -1,5 +1,5 @@
 """Home Assistant vacuum entity"""
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Mapping
 from datetime import timedelta
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
@@ -21,6 +21,7 @@ from homeassistant.components.vacuum import (
 )
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloudv2 import CloudClient, CloudRobot
+from purei9_unofficial.common import DustbinStates
 from . import purei9, const
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
@@ -118,6 +119,12 @@ class PureI9(StateVacuumEntity):
         """If the vacuum reports STATE_ERROR then explain the error"""
         # According to documentation then this is required if the entity
         # can report error states. However, I can't fetch any error message.
+        if self._params.dustbin == DustbinStates.empty:
+            return "The dustbin is missing"
+
+        if self._params.dustbin == DustbinStates.full:
+            return "The dustbin needs to be emptied"
+
         return "Error"
 
     @property
@@ -135,6 +142,10 @@ class PureI9(StateVacuumEntity):
         """Assume the next state after sending a command"""
         return (self._assumed_next_state is not None
             or self._assumed_next_fan_speed is not None)
+
+    @property
+    def extra_state_attributes(self) -> Mapping[str, Any]:
+        return {"dustbin": self._params.dustbin.name.upper()}
 
     def start(self) -> None:
         """Start cleaning"""
@@ -181,12 +192,14 @@ class PureI9(StateVacuumEntity):
         Can contain IO code.
         """
         pure_i9_battery = self._robot.getbattery()
+        purei9_dustbin = self._robot.getdustbinstatus()
 
         if self._assumed_next_state is not None:
             self._params.state = self._assumed_next_state
             self._assumed_next_state = None
         else:
-            self._params.state = purei9.state_to_hass(self._robot.getstatus(), pure_i9_battery)
+            self._params.state = purei9.state_to_hass(
+                self._robot.getstatus(), pure_i9_battery, purei9_dustbin)
 
         if self._assumed_next_fan_speed is not None:
             self._params.fan_speed = self._assumed_next_fan_speed
@@ -199,3 +212,4 @@ class PureI9(StateVacuumEntity):
         self._params.battery = purei9.battery_to_hass(pure_i9_battery)
         self._params.available = self._robot.isconnected()
         self._params.firmware = self._robot.getfirmware()
+        self._params.dustbin = purei9_dustbin
