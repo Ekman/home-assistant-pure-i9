@@ -145,7 +145,7 @@ class PureI9(StateVacuumEntity):
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any]:
-        return {"dustbin": self._params.dustbin.name.upper()}
+        return {"dustbin": self._params.dustbin.name}
 
     def start(self) -> None:
         """Start cleaning"""
