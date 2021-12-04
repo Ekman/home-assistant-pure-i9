@@ -145,7 +145,7 @@ class PureI9(StateVacuumEntity):
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any]:
-        return {"dustbin": self._params.dustbin.name.upper()}
+        return {"dustbin": self._params.dustbin.name}
 
     def start(self) -> None:
         """Start cleaning"""
@@ -212,4 +212,4 @@ class PureI9(StateVacuumEntity):
         self._params.battery = purei9.battery_to_hass(pure_i9_battery)
         self._params.available = self._robot.isconnected()
         self._params.firmware = self._robot.getfirmware()
-        self._params.dustbin = purei9_dustbin
+        self._params.dustbin = purei9.dustbin_to_hass(purei9_dustbin)

@@ -1,5 +1,6 @@
 """Pure i9 business logic"""
 from typing import List
+from enum import Enum
 from purei9_unofficial.common import BatteryStatus, RobotStates, PowerMode, DustbinStates
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
@@ -121,3 +122,23 @@ def fan_speed_to_hass(fan_speed_list: List[str], fan_speed_purei9: PowerMode) ->
         return POWER_MODE_ECO
 
     return POWER_MODE_POWER
+
+class Dustbin(Enum):
+    """Contains possible values for the dustbin"""
+    UNKNOWN = 1
+    CONNECTED = 2
+    DISCONNECTED = 3
+    FULL = 4
+
+def dustbin_to_hass(dustbin: DustbinStates) -> Dustbin:
+    """Conver the Pure i9 dustbin into an internal representation"""
+    if dustbin == DustbinStates.unset:
+        return Dustbin.UNKNOWN
+
+    if dustbin == DustbinStates.connected:
+        return Dustbin.CONNECTED
+
+    if dustbin == DustbinStates.empty:
+        return Dustbin.DISCONNECTED
+
+    return Dustbin.FULL

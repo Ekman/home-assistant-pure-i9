@@ -16,7 +16,7 @@ Me or this repository is in no way affiliated with Electrolux. This is purely a 
 
 ## Installation
 
-Install using [Home Assistant Community Store (HACS)](https://hacs.xyz/). 
+Install using [Home Assistant Community Store (HACS)](https://hacs.xyz/).
 
 **If you don't already have HACS installed** then follow these steps:
 
@@ -39,6 +39,8 @@ vacuum:
     email: me@example.com
     password: example
 ```
+
+For more information on what the integration can do [read the manual](MANUAL.md).
 
 ## Versioning
 
