@@ -33,7 +33,7 @@ You can read the dustbin status of the vacuum using the attribute `dustbin`. The
 
 | Name | Description |
 | --- | --- |
-| UNSET | No information available |
+| UNKNOWN | No information available |
 | CONNECTED | The vacuum is ready to be used |
-| EMPTY | There is no dustin connected |
+| DISCONNECTED | There is no dustin connected |
 | FULL | It's full and needs to be removed and emptied |
