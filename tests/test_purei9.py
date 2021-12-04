@@ -112,5 +112,18 @@ class TestPureI9(unittest.TestCase):
             with self.subTest():
                 self.assertEqual(expected, purei9.fan_speed_to_hass(fan_speed_list, fan_speed))
 
+    data_dustbin_to_hass = [
+        (DustbinStates.unset, purei9.Dustbin.UNKNOWN),
+        (DustbinStates.connected, purei9.Dustbin.CONNECTED),
+        (DustbinStates.empty, purei9.Dustbin.DISCONNECTED),
+        (DustbinStates.full, purei9.Dustbin.FULL),
+    ]
+
+    def test_dustbin_to_hass(self):
+        """Test to convert a dustbin value to internal format"""
+        for dustbin, expected in self.data_dustbin_to_hass:
+            with self.subTest():
+                self.assertEqual(expected, purei9.dustbin_to_hass(dustbin))
+
 if __name__ == '__main__':
     unittest.main()
