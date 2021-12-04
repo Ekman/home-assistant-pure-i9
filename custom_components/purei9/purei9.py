@@ -132,12 +132,13 @@ class Dustbin(Enum):
 
 def dustbin_to_hass(dustbin: DustbinStates) -> Dustbin:
     """Conver the Pure i9 dustbin into an internal representation"""
-    match dustbin:
-        case DustbinStates.unset:
-            return Dustbin.UNKNOWN
-        case DustbinStates.connected:
-            return Dustbin.CONNECTED
-        case DustbinStates.empty:
-            return Dustbin.DISCONNECTED
-        case DustbinStates.full:
-            return Dustbin.FULL
+    if dustbin == DustbinStates.unset:
+        return Dustbin.UNKNOWN
+
+    if dustbin == DustbinStates.connected:
+        return Dustbin.CONNECTED
+
+    if dustbin == DustbinStates.empty:
+        return Dustbin.DISCONNECTED
+
+    return Dustbin.FULL
