@@ -1,7 +1,7 @@
 {
     "domain": "purei9",
     "name": "Electrolux Pure i9 integration",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "documentation": "https://github.com/Ekman/home-assistant-pure-i9",
     "issue_tracker": "https://github.com/Ekman/home-assistant-pure-i9/issues",
     "dependencies": [],
