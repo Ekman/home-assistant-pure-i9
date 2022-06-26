@@ -145,7 +145,12 @@ class PureI9(StateVacuumEntity):
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any]:
-        return {"dustbin": self._params.dustbin.name}
+        return {
+            "dustbin": self._params.dustbin.name,
+            "last_cleaning_start": self._params.last_cleaning_session.starttime if self._params.last_cleaning_session is not None else None,
+            "last_cleaning_stop": self._params.last_cleaning_session.starttime + timedelta(seconds=self._params.last_cleaning_session.duration) if self._params.last_cleaning_session is not None else None,
+            "last_cleaning_duration_seconds": self._params.last_cleaning_session.duration if self._params.last_cleaning_session is not None else None
+        }
 
     def start(self) -> None:
         """Start cleaning"""
@@ -193,6 +198,7 @@ class PureI9(StateVacuumEntity):
         """
         pure_i9_battery = self._robot.getbattery()
         purei9_dustbin = self._robot.getdustbinstatus()
+        purei9_cleaning_sessions = self._robot.getCleaningSessions()
 
         if self._assumed_next_state is not None:
             self._params.state = self._assumed_next_state
@@ -213,3 +219,4 @@ class PureI9(StateVacuumEntity):
         self._params.available = self._robot.isconnected()
         self._params.firmware = self._robot.getfirmware()
         self._params.dustbin = purei9.dustbin_to_hass(purei9_dustbin)
+        self._params.last_cleaning_session = cleaning_sessions[0] if purei9_cleaning_sessions else None
