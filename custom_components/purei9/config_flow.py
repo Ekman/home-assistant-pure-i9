@@ -14,7 +14,7 @@ class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             try:
-                # Validate that the provided access token is correct
+                # Validate that the provided credentials are correct
                 email = user_input[CONF_EMAIL]
                 password = user_input[CONF_PASSWORD]
 
