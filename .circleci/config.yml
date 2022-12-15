@@ -23,7 +23,7 @@ jobs:
       - checkout
       - pip
       - run: pylint custom_components/purei9 tests
-      - run: python3 -m json.tool custom_components/purei9/manifest.json
+      - run: find . -name "*.json" -type f -print0 | xargs -0I {} python3 -m json.tool {}
   test:
     docker:
       - image: cimg/python:3.9
