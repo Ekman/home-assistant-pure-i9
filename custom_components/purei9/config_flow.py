@@ -22,7 +22,7 @@ class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 await self.hass.async_add_executor_job(purei9_client.tryLogin)
 
                 return self.async_create_entry(
-                    title="Home",
+                    title=email,
                     data=user_input
                 )
             except Exception:
