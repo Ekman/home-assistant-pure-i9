@@ -33,6 +33,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 
 SCAN_INTERVAL = timedelta(minutes=1)
 
+# Deprecated way to setup this integration. Will be removed in v2.x.
 def setup_platform(_hass, config, add_entities, _discovery_info=None) -> None:
     """Register all Pure i9's in Home Assistant"""
     client = CloudClient(config[CONF_EMAIL], config.get(CONF_PASSWORD))
