@@ -1,0 +1,16 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Credentials",
+                "data": {
+                    "email": "E-mail",
+                    "password": "Password"
+                }
+            }
+        }
+    },
+    "error": {
+        "auth": "The e-mail or password that you've provided is incorrect."
+    }
+}

@@ -1,7 +1,7 @@
 """Home Assistant vacuum entity"""
 from typing import List, Optional, Any, Mapping
 from datetime import timedelta
-import homeassistant.helpers.config_validation as cv
+import logging
 import voluptuous as vol
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.components.vacuum import (
@@ -24,18 +24,37 @@ from purei9_unofficial.cloudv2 import CloudClient, CloudRobot
 from purei9_unofficial.common import DustbinStates
 from . import purei9, const
 
+_LOGGER = logging.getLogger(__name__)
+
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Required(CONF_EMAIL): cv.string,
-    vol.Required(CONF_PASSWORD): cv.string
+    vol.Required(CONF_EMAIL): str,
+    vol.Required(CONF_PASSWORD): str
 })
 
 SCAN_INTERVAL = timedelta(minutes=1)
 
-def setup_platform(_hass, config, add_entities,_discovery_info=None) -> None:
+# Deprecated way to setup this integration. Will be removed in v2.x.
+def setup_platform(_hass, config, add_entities, _discovery_info=None) -> None:
     """Register all Pure i9's in Home Assistant"""
     client = CloudClient(config[CONF_EMAIL], config.get(CONF_PASSWORD))
     entities = map(PureI9.create, client.getRobots())
     add_entities(entities, update_before_add=True)
+
+async def async_setup_entry(hass, config_entry, async_add_entities):
+    """Initial setup for the workers. Download and identify all workers."""
+    email = config_entry.data.get(CONF_EMAIL)
+    password = config_entry.data.get(CONF_PASSWORD)
+
+    purei9_client = CloudClient(email, password)
+    robots = await hass.async_add_executor_job(purei9_client.getRobots)
+
+    entities = []
+
+    for robot in robots:
+        entity = await hass.async_add_executor_job(PureI9.create, robot)
+        entities.append(entity)
+
+    async_add_entities(entities, update_before_add=True)
 
 class PureI9(StateVacuumEntity):
     """The main Pure i9 vacuum entity"""
