@@ -1,7 +1,7 @@
 """Home Assistant vacuum entity"""
 from typing import List, Optional, Any, Mapping
 from datetime import timedelta
-import homeassistant.helpers.config_validation as cv
+import logging
 import voluptuous as vol
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.components.vacuum import (
@@ -24,18 +24,36 @@ from purei9_unofficial.cloudv2 import CloudClient, CloudRobot
 from purei9_unofficial.common import DustbinStates
 from . import purei9, const
 
+_LOGGER = logging.getLogger(__name__)
+
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Required(CONF_EMAIL): cv.string,
-    vol.Required(CONF_PASSWORD): cv.string
+    vol.Required(CONF_EMAIL): str,
+    vol.Required(CONF_PASSWORD): str
 })
 
 SCAN_INTERVAL = timedelta(minutes=1)
 
-def setup_platform(_hass, config, add_entities,_discovery_info=None) -> None:
+def setup_platform(_hass, config, add_entities, _discovery_info=None) -> None:
     """Register all Pure i9's in Home Assistant"""
     client = CloudClient(config[CONF_EMAIL], config.get(CONF_PASSWORD))
     entities = map(PureI9.create, client.getRobots())
     add_entities(entities, update_before_add=True)
+
+async def async_setup_entry(hass, config_entry, async_add_entities):
+    """Initial setup for the workers. Download and identify all workers."""
+    email = config_entry.data.get(CONF_EMAIL)
+    password = config_entry.data.get(CONF_PASSWORD)
+
+    purei9_client = CloudClient(email, password)
+    robots = await hass.async_add_executor_job(purei9_client.getRobots)
+
+    entities = []
+
+    for robot in robots:
+        entity = await hass.async_add_executor_job(PureI9.create, robot)
+        entities.append(entity)
+
+    async_add_entities(entities, update_before_add=True)
 
 class PureI9(StateVacuumEntity):
     """The main Pure i9 vacuum entity"""
@@ -147,46 +165,49 @@ class PureI9(StateVacuumEntity):
     def extra_state_attributes(self) -> Mapping[str, Any]:
         return {"dustbin": self._params.dustbin.name}
 
-    def start(self) -> None:
+    async def async_start(self):
         """Start cleaning"""
         # If you click on start after clicking return, it will continue
         # returning. So we'll need to call stop first, then start in order
         # to start a clean.
         if self._params.state == STATE_RETURNING:
-            self._robot.stopclean()
+            await self.hass.async_add_executor_job(self._robot.stopclean)
 
         # According to Home Assistant, pause should be an idempotent action.
         # However, the Pure i9 will toggle pause on/off if called multiple
         # times. Circumvent that.
         if self._params.state != STATE_CLEANING:
-            self._robot.startclean()
+            await self.hass.async_add_executor_job(self._robot.startclean)
             self._assumed_next_state = STATE_CLEANING
 
-    def return_to_base(self, **kwargs) -> None:
+    async def async_return_to_base(self, **kwargs):
         """Return to the dock"""
-        self._robot.gohome()
+        await self.hass.async_add_executor_job(self._robot.gohome)
         self._assumed_next_state = STATE_RETURNING
 
-    def stop(self, **kwargs) -> None:
+    async def async_stop(self, **kwargs):
         """Stop cleaning"""
-        self._robot.stopclean()
+        await self.hass.async_add_executor_job(self._robot.stopclean)
         self._assumed_next_state = STATE_IDLE
 
-    def pause(self) -> None:
+    async def async_pause(self):
         """Pause cleaning"""
         # According to Home Assistant, pause should be an idempotent
         # action. However, the Pure i9 will toggle pause on/off if
         # called multiple times. Circumvent that.
         if self._params.state != STATE_PAUSED:
-            self._robot.pauseclean()
+            await self.hass.async_add_executor_job(self._robot.pauseclean)
             self._assumed_next_state = STATE_PAUSED
 
-    def set_fan_speed(self, fan_speed: str, **kwargs: Any) -> None:
+    async def async_set_fan_speed(self, fan_speed: str, **kwargs: Any):
         """Set the fan speed of the robot"""
-        self._robot.setpowermode(purei9.fan_speed_to_purei9(fan_speed))
+        await self.hass.async_add_executor_job(
+            self._robot.setpowermode,
+            purei9.fan_speed_to_purei9(fan_speed)
+        )
         self._assumed_next_fan_speed = fan_speed
 
-    def update(self) -> None:
+    async def async_update(self):
         """
         Called by Home Assistant asking the vacuum to update to the latest state.
         Can contain IO code.
