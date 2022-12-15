@@ -25,6 +25,7 @@ class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     title=email,
                     data=user_input
                 )
+            # pylint: disable=broad-except
             except Exception:
                 errors["base"] = "auth"
 
