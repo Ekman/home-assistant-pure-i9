@@ -25,7 +25,7 @@ class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     title="Home",
                     data=user_input
                 )
-            except:
+            except Exception:
                 errors["base"] = "auth"
 
         schema = vol.Schema({
