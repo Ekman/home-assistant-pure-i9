@@ -46,7 +46,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             PureI9(coordinator, robot, coordinator.data)
         )
 
-    async_add_entities(entities, update_before_add=True)
+    async_add_entities(entities)
 
 class PureI9(CoordinatorEntity, StateVacuumEntity):
     """The main Pure i9 vacuum entity"""
