@@ -141,52 +141,59 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
     def extra_state_attributes(self) -> Mapping[str, Any]:
         return {"dustbin": self._params.dustbin.name}
 
-    def start(self) -> None:
+    async def async_start(self):
         """Start cleaning"""
         # If you click on start after clicking return, it will continue
         # returning. So we'll need to call stop first, then start in order
         # to start a clean.
         if self._params.state == STATE_RETURNING:
-            self._robot.stopclean()
+            await self.hass.async_add_executor_job(self._robot.stopclean)
 
         # According to Home Assistant, pause should be an idempotent action.
         # However, the Pure i9 will toggle pause on/off if called multiple
         # times. Circumvent that.
         if self._params.state != STATE_CLEANING:
-            self._robot.startclean()
+            await self.hass.async_add_executor_job(self._robot.startclean)
             self._params.state = STATE_CLEANING
+            self.async_write_ha_state()
 
-    def return_to_base(self, **kwargs) -> None:
+    async def async_return_to_base(self, **kwargs):
         """Return to the dock"""
-        self._robot.gohome()
+        await self.hass.async_add_executor_job(self._robot.gohome)
         self._params.state = STATE_RETURNING
+        self.async_write_ha_state()
 
-    def stop(self, **kwargs) -> None:
+    async def async_stop(self, **kwargs):
         """Stop cleaning"""
-        self._robot.stopclean()
+        await self.hass.async_add_executor_job(self._robot.stopclean)
         self._params.state = STATE_IDLE
+        self.async_write_ha_state()
 
-    def pause(self) -> None:
+    async def async_pause(self):
         """Pause cleaning"""
         # According to Home Assistant, pause should be an idempotent
         # action. However, the Pure i9 will toggle pause on/off if
         # called multiple times. Circumvent that.
         if self._params.state != STATE_PAUSED:
-            self._robot.pauseclean()
+            await self.hass.async_add_executor_job(self._robot.pauseclean)
             self._params.state = STATE_PAUSED
+            self.async_write_ha_state()
 
-    def set_fan_speed(self, fan_speed: str, **kwargs: Any) -> None:
+    async def async_set_fan_speed(self, fan_speed: str, **kwargs: Any):
         """Set the fan speed of the robot"""
-        self._robot.setpowermode(purei9.fan_speed_to_purei9(fan_speed))
+        await self.hass.async_add_executor_job(
+            self._robot.setpowermode,
+            purei9.fan_speed_to_purei9(fan_speed)
+        )
         self._params.fan_speed = fan_speed
+        self.async_write_ha_state()
 
-    def _handle_coordinator_update(self) -> None:
+    async def _handle_coordinator_update(self):
         """
         Called by Home Assistant asking the vacuum to update to the latest state.
         Can contain IO code.
         """
         params = self.coordinator.data
-
 
         self._params.state = params.state
         self._params.fan_speed = params.fan_speed

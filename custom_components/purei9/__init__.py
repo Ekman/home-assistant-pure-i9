@@ -22,9 +22,7 @@ async def async_setup_entry(hass, config_entry) -> bool:
             "robot": robot
         })
 
-    if const.DOMAIN not in hass.data:
-        hass.data[const.DOMAIN] = {}
-    
+    hass.data.setdefault(const.DOMAIN, {})
     hass.data[const.DOMAIN][config_entry.entry_id] = {"entities_meta": entities_meta}
 
     await hass.config_entries.async_forward_entry_setups(config_entry, ["vacuum"])
