@@ -36,7 +36,7 @@ class PureI9Coordinator(DataUpdateCoordinator):
                     self.update_and_create_params
                 )
         except Exception as ex:
-            raise UpdateFailed("Error communicating with API") from ex
+            raise UpdateFailed from ex
 
     def update_and_create_params(self):
         """Update and create the latest version of params."""
