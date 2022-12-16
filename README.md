@@ -31,8 +31,6 @@ Install using [Home Assistant Community Store (HACS)](https://hacs.xyz/).
 
 ## Configuration
 
-## Configuration
-
 Follow these steps to configure the integration:
 
 1. Navigate to `Settings -> Devices & Services -> Integrations`.
