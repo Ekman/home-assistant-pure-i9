@@ -4,7 +4,7 @@ from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloudv3 import CloudClient
 from . import const, coordinator
 
-PLATFORMS = ["vacuum", "sensor"]
+PLATFORMS = ["vacuum", "sensor", "camera"]
 
 async def async_setup_entry(hass, config_entry) -> bool:
     """Setup the integration after the config flow"""
