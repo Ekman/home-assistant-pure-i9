@@ -14,11 +14,11 @@ _LOGGER = logging.getLogger(__name__)
 class PureI9Coordinator(DataUpdateCoordinator):
     """Coordinate data updates from Pure i9."""
 
-    def __init__(self, hass, robot: CloudRobot):
+    def __init__(self, hass, name, robot: CloudRobot):
         super().__init__(
             hass,
             _LOGGER,
-            name="Pure i9",
+            name=name,
             update_interval=timedelta(minutes=1),
         )
         self._robot = robot
@@ -39,7 +39,7 @@ class PureI9Coordinator(DataUpdateCoordinator):
             raise UpdateFailed(f"Error communicating with API: {ex}")
 
     def update_and_create_params(self):
-        """Update and create the latest version of params"""
+        """Update and create the latest version of params."""
         purei9_fan_speed_list = list(map(lambda x: x.name, self._robot.getsupportedpowermodes()))
         fan_speed_list = purei9.fan_speed_list_to_hass(purei9_fan_speed_list)
 
