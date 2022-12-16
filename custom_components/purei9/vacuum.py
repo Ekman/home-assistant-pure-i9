@@ -71,10 +71,6 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         super().__init__(coordinator)
         self._robot = robot
         self._params = params
-        # The Pure i9 library caches results. When we do state updates, the next update
-        # is sometimes cached. Override that so we can get the desired state quicker.
-        self._assumed_next_state = None
-        self._assumed_next_fan_speed = None
 
     @staticmethod
     def create(robot: CloudRobot):
@@ -163,12 +159,6 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         return self._params.fan_speed_list
 
     @property
-    def assumed_state(self) -> bool:
-        """Assume the next state after sending a command"""
-        return (self._assumed_next_state is not None
-            or self._assumed_next_fan_speed is not None)
-
-    @property
     def extra_state_attributes(self) -> Mapping[str, Any]:
         return {"dustbin": self._params.dustbin.name}
 
@@ -185,17 +175,17 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         # times. Circumvent that.
         if self._params.state != STATE_CLEANING:
             self._robot.startclean()
-            self._assumed_next_state = STATE_CLEANING
+            self._params.state = STATE_CLEANING
 
     def return_to_base(self, **kwargs) -> None:
         """Return to the dock"""
         self._robot.gohome()
-        self._assumed_next_state = STATE_RETURNING
+        self._params.state = STATE_RETURNING
 
     def stop(self, **kwargs) -> None:
         """Stop cleaning"""
         self._robot.stopclean()
-        self._assumed_next_state = STATE_IDLE
+        self._params.state = STATE_IDLE
 
     def pause(self) -> None:
         """Pause cleaning"""
@@ -204,12 +194,12 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         # called multiple times. Circumvent that.
         if self._params.state != STATE_PAUSED:
             self._robot.pauseclean()
-            self._assumed_next_state = STATE_PAUSED
+            self._params.state = STATE_PAUSED
 
     def set_fan_speed(self, fan_speed: str, **kwargs: Any) -> None:
         """Set the fan speed of the robot"""
         self._robot.setpowermode(purei9.fan_speed_to_purei9(fan_speed))
-        self._assumed_next_fan_speed = fan_speed
+        self._params.fan_speed = fan_speed
 
     def _handle_coordinator_update(self) -> None:
         """
@@ -218,18 +208,9 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         """
         params = self.coordinator.data
 
-        if self._assumed_next_state is not None:
-            self._params.state = self._assumed_next_state
-            self._assumed_next_state = None
-        else:
-            self._params.state = params.state
 
-        if self._assumed_next_fan_speed is not None:
-            self._params.fan_speed = self._assumed_next_fan_speed
-            self._assumed_next_fan_speed = None
-        else:
-            self._params.fan_speed = params.fan_speed
-
+        self._params.state = params.state
+        self._params.fan_speed = params.fan_speed
         self._params.name = params.name
         self._params.battery = params.battery
         self._params.available = params.available
