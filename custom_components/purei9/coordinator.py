@@ -1,3 +1,4 @@
+"""Coordinate data updates from Pure i9."""
 import logging
 from datetime import timedelta
 import async_timeout
@@ -5,11 +6,10 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     UpdateFailed,
 )
-import async_timeout
 from purei9_unofficial.cloudv2 import CloudRobot
 from . import purei9
 
-_LOGGER = logging.getLogger(__name__) 
+_LOGGER = logging.getLogger(__name__)
 
 class PureI9Coordinator(DataUpdateCoordinator):
     """Coordinate data updates from Pure i9."""
@@ -36,7 +36,7 @@ class PureI9Coordinator(DataUpdateCoordinator):
                     self.update_and_create_params
                 )
         except Exception as ex:
-            raise UpdateFailed(f"Error communicating with API: {ex}")
+            raise UpdateFailed("Error communicating with API") from ex
 
     def update_and_create_params(self):
         """Update and create the latest version of params."""

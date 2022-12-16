@@ -26,5 +26,5 @@ async def async_setup_entry(hass, config_entry) -> bool:
     hass.data[const.DOMAIN][config_entry.entry_id] = {const.COORDINATORS: coords}
 
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
-    
+
     return True

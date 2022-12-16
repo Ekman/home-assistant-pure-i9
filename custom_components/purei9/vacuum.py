@@ -35,7 +35,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Initial setup for the workers. Download and identify all workers."""
     data = hass.data[const.DOMAIN][config_entry.entry_id]
-    
+
     entities = map(
         lambda coord: PureI9(coord, coord.robot, coord.data),
         data[const.COORDINATORS]
@@ -183,7 +183,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         self._params.fan_speed = fan_speed
         self.async_write_ha_state()
 
-    async def _handle_coordinator_update(self):
+    def _handle_coordinator_update(self):
         """
         Called by Home Assistant asking the vacuum to update to the latest state.
         Can contain IO code.
@@ -237,7 +237,7 @@ class PureI9Legacy(StateVacuumEntity):
         fan_speed_list = purei9.fan_speed_list_to_hass(purei9_fan_speed_list)
 
         params = purei9.Params(robot.getid(), robot.getname(), fan_speed_list)
-        return PureI9(robot, params)
+        return PureI9Legacy(robot, params)
 
     @property
     def supported_features(self) -> int:
