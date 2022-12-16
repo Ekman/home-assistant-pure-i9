@@ -22,9 +22,17 @@ jobs:
     steps:
       - checkout
       - pip
-      - run: pylint custom_components/purei9
-      - run: python3 -m json.tool custom_components/purei9/manifest.json
+      - run: pylint custom_components/purei9 tests
+      - run: find . -name "*.json" -type f -print0 | xargs -0I {} python3 -m json.tool {}
+  test:
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - pip
+      - run: python3 -m unittest discover --start-directory tests --verbose
 workflows:
   purei9:
     jobs:
       - lint
+      - test

@@ -3,7 +3,7 @@
 [![CircleCI](https://circleci.com/gh/Ekman/home-assistant-pure-i9/tree/master.svg?style=svg)](https://circleci.com/gh/Ekman/home-assistant-pure-i9/tree/master)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
 
-This repository integrates your [Electrolux Pure i9 robot vacuum](https://www.electrolux.se/wellbeing/discover/robot-vacuum-cleaner-purei9/) with the smart home platform [Home Assistant](https://www.home-assistant.io/). The integration communicates with your Pure i9 using the cloud.
+Integrate your [Electrolux Pure i9 robot vacuum](https://www.electrolux.se/wellbeing/discover/robot-vacuum-cleaner-purei9/) with the smart home platform [Home Assistant](https://www.home-assistant.io/). The integration communicates with your Pure i9 using the cloud.
 
 Credits to:
 
@@ -16,10 +16,17 @@ Me or this repository is in no way affiliated with Electrolux. This is purely a 
 
 ## Installation
 
-Install using [Home Assistant Community Store (HACS)](https://hacs.xyz/). Follow these steps:
+Install using [Home Assistant Community Store (HACS)](https://hacs.xyz/).
 
-1. [Add `https://github.com/Ekman/home-assistant-pure-i9` as a custom repository in `HACS`](https://hacs.xyz/docs/faq/custom_repositories/)
-2. Install `Pure i9` using `HACS`
+**If you don't already have HACS installed** then follow these steps:
+
+1. [Install HACS](https://hacs.xyz/docs/setup/prerequisites)
+2. [Configure HACS](https://hacs.xyz/docs/configuration/basic)
+
+**Once HACS is installed on your Home Assistance** then follow these steps:
+
+1. Add `https://github.com/Ekman/home-assistant-pure-i9` as a [custom repository in HACS](https://hacs.xyz/docs/faq/custom_repositories/)
+2. Install `Pure i9` using HACS
 3. Reboot Home Assistant
 
 ## Configuration
@@ -32,6 +39,8 @@ vacuum:
     email: me@example.com
     password: example
 ```
+
+For more information on what the integration can do [read the manual](MANUAL.md).
 
 ## Versioning
 

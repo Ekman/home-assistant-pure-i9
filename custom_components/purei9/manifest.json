@@ -1,12 +1,12 @@
 {
     "domain": "purei9",
-    "name": "Electrolux Pure i9 integration",
-    "version": "1.0.0",
+    "name": "Electrolux Pure i9",
+    "version": "1.2.2",
     "documentation": "https://github.com/Ekman/home-assistant-pure-i9",
     "issue_tracker": "https://github.com/Ekman/home-assistant-pure-i9/issues",
     "dependencies": [],
     "codeowners": ["Ekman"],
-    "requirements": ["purei9_unofficial==0.0.3"],
+    "requirements": ["purei9_unofficial==0.0.10"],
     "iot_class": "cloud_polling",
-    "config_flow": false
+    "config_flow": true
 }

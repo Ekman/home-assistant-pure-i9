@@ -1,5 +1,7 @@
 """Pure i9 business logic"""
-from purei9_unofficial.common import BatteryStatus, RobotStates
+from typing import List
+from enum import Enum
+from purei9_unofficial.common import BatteryStatus, RobotStates, PowerMode, DustbinStates
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
     STATE_DOCKED,
@@ -11,60 +13,81 @@ from homeassistant.components.vacuum import (
 
 # See: https://github.com/Phype/purei9_unofficial/blob/master/src/purei9_unofficial/common.py
 PURE_I9_STATE_MAP = {
-    RobotStates[1]: STATE_CLEANING,
-    RobotStates[2]: STATE_PAUSED,
-    RobotStates[3]: STATE_CLEANING,
-    RobotStates[4]: STATE_PAUSED,
-    RobotStates[5]: STATE_RETURNING,
-    RobotStates[6]: STATE_PAUSED,
-    RobotStates[7]: STATE_RETURNING,
-    RobotStates[8]: STATE_PAUSED,
-    RobotStates[9]: STATE_DOCKED,
-    # RobotStates[10]: Special case, see function,
-    RobotStates[11]: STATE_ERROR,
-    RobotStates[12]: STATE_DOCKED,
-    # RobotStates[13]: Manual steering?,
-    RobotStates[14]: STATE_DOCKED
+    RobotStates.Cleaning: STATE_CLEANING,
+    RobotStates.Paused_Cleaning: STATE_PAUSED,
+    RobotStates.Spot_Cleaning: STATE_CLEANING,
+    RobotStates.Paused_Spot_Cleaning: STATE_PAUSED,
+    RobotStates.Return: STATE_RETURNING,
+    RobotStates.Paused_Return: STATE_PAUSED,
+    RobotStates.Return_for_Pitstop: STATE_RETURNING,
+    RobotStates.Paused_Return_for_Pitstop: STATE_PAUSED,
+    RobotStates.Charging: STATE_DOCKED,
+    # RobotStates.Sleeping: Special case, see function,
+    RobotStates.Error: STATE_ERROR,
+    RobotStates.Pitstop: STATE_DOCKED,
+    # RobotStates.Manual_Steering: Manual steering?,
+    RobotStates.Firmware_Upgrade: STATE_DOCKED
 }
 
-def state_to_hass(pure_i9_state: str, pure_i9_battery: str) -> str:
+def state_to_hass(
+    pure_i9_state: str,
+    pure_i9_battery: str,
+    purei9_dustbin: DustbinStates=DustbinStates.connected
+    ) -> str:
     """Translate Pure i9 data into a Home Assistant state constant"""
     # The Pure i9 will become "Sleeping" when docked and charged 100% OR when stopped.
     # In order to detect if it's docket or if it's just idling in the middle of a room
     # check the battery level. If it's full then we're docked.
-    if pure_i9_state == RobotStates[10]:
-        return STATE_DOCKED if pure_i9_battery == BatteryStatus[6] else STATE_IDLE
+    if purei9_dustbin in (DustbinStates.empty, DustbinStates.full):
+        return STATE_ERROR
+
+    if pure_i9_state == RobotStates.Sleeping:
+        return STATE_DOCKED if pure_i9_battery == BatteryStatus.High else STATE_IDLE
 
     return PURE_I9_STATE_MAP.get(pure_i9_state, STATE_IDLE)
 
 # See: https://github.com/Phype/purei9_unofficial/blob/master/src/purei9_unofficial/common.py
 PURE_I9_BATTERY_MAP = {
-    BatteryStatus[1]: 0,
-    BatteryStatus[2]: 20,
-    BatteryStatus[3]: 40,
-    BatteryStatus[4]: 60,
-    BatteryStatus[5]: 80,
-    BatteryStatus[6]: 100
+    BatteryStatus.Dead: 0,
+    BatteryStatus.CriticalLow: 20,
+    BatteryStatus.Low: 40,
+    BatteryStatus.Medium: 60,
+    BatteryStatus.Normal: 80,
+    BatteryStatus.High: 100
 }
 
 def battery_to_hass(pure_i9_battery: str) -> int:
     """Translate Pure i9 data into a Home Assistant battery level"""
     return PURE_I9_BATTERY_MAP.get(pure_i9_battery, 0)
 
+POWER_MODE_ECO = "ECO"
+POWER_MODE_POWER = "POWER"
+POWER_MODE_QUIET = "QUIET"
+POWER_MODE_SMART = "SMART"
+
 class BaseParams:
-    def __init__(self, unique_id: str, name: str):
+    """Data available in the state"""
+    battery: int = 100
+    state: str = STATE_IDLE
+    available: bool = True
+    firmware: str = None
+    fan_speed: str = POWER_MODE_POWER
+    dustbin: DustbinStates = DustbinStates.connected
+
+    def __init__(self, unique_id: str, name: str, fan_speed_list: List[str]):
         self._unique_id = unique_id
-        self._name = name
+        self.name = name
+        self._fan_speed_list = fan_speed_list
 
     @property
     def unique_id(self) -> str:
         """Immutable unique identifier"""
         return self._unique_id
-
+    
     @property
-    def name(self) -> str:
-        """Immutable name"""
-        return self._name
+    def fan_speed_list(self) -> str:
+        """Immutable fan speed list"""
+        return self._fan_speed_list
 
 class HomeAssistantVacuumParams(BaseParams):
     """Data available in the vacuum state"""
@@ -76,3 +99,57 @@ class HomeAssistantVacuumParams(BaseParams):
 class HomeAssistantCameraParams(BaseParams):
     """Data available in the camera state"""
     image = None
+
+def is_power_mode_v2(fan_speed_list: List[str]) -> bool:
+    """Determine if the robot supports the new or old fan speed list """
+    return len(fan_speed_list) == 3
+
+def fan_speed_list_to_hass(fan_speed_list_purei9: List[str]) -> List[str]:
+    """Convert the fan speed list to internal representation"""
+    if is_power_mode_v2(fan_speed_list_purei9):
+        return list([POWER_MODE_QUIET, POWER_MODE_SMART, POWER_MODE_POWER])
+
+    return list([POWER_MODE_ECO, POWER_MODE_POWER])
+
+def fan_speed_to_purei9(fan_speed_hass: str) -> PowerMode:
+    """Convert our internal representation of a fan speed to one that Purei9 can understand"""
+    if fan_speed_hass == POWER_MODE_POWER:
+        return PowerMode.HIGH
+
+    if fan_speed_hass == POWER_MODE_QUIET:
+        return PowerMode.LOW
+
+    return PowerMode.MEDIUM
+
+def fan_speed_to_hass(fan_speed_list: List[str], fan_speed_purei9: PowerMode) -> str:
+    """Convert Purei9 fan sped to our internal representation"""
+    if is_power_mode_v2(fan_speed_list):
+        if fan_speed_purei9 == PowerMode.LOW:
+            return POWER_MODE_QUIET
+
+        if fan_speed_purei9 == PowerMode.MEDIUM:
+            return POWER_MODE_SMART
+    elif fan_speed_purei9 == PowerMode.MEDIUM:
+        return POWER_MODE_ECO
+
+    return POWER_MODE_POWER
+
+class Dustbin(Enum):
+    """Contains possible values for the dustbin"""
+    UNKNOWN = 1
+    CONNECTED = 2
+    DISCONNECTED = 3
+    FULL = 4
+
+def dustbin_to_hass(dustbin: DustbinStates) -> Dustbin:
+    """Conver the Pure i9 dustbin into an internal representation"""
+    if dustbin == DustbinStates.unset:
+        return Dustbin.UNKNOWN
+
+    if dustbin == DustbinStates.connected:
+        return Dustbin.CONNECTED
+
+    if dustbin == DustbinStates.empty:
+        return Dustbin.DISCONNECTED
+
+    return Dustbin.FULL

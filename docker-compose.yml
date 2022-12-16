@@ -1,0 +1,23 @@
+version: "3"
+services:
+  purei9:
+    build:
+      context: .
+    volumes: [ "./:/home/purei9/files:ro" ]
+    tty: true
+    stdin_open: true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /home/purei9/.cache
+      - /home/purei9/.local
+  # homeassistant.local:8123
+  hass:
+    image: homeassistant/home-assistant:stable
+    restart: unless-stopped
+    volumes:
+      - ./hass:/config
+      - ./custom_components:/config/custom_components:ro
+    environment:
+      TZ: Europe/Stockholm
+    ports: [ "8123:8123" ]
