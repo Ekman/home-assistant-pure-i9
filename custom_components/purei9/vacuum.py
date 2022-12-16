@@ -36,7 +36,9 @@ SCAN_INTERVAL = timedelta(minutes=1)
 # Deprecated way to setup this integration. Will be removed in v2.x.
 def setup_platform(_hass, config, add_entities, _discovery_info=None) -> None:
     """Register all Pure i9's in Home Assistant"""
-    _LOGGER.warning("DEPRECATED: Setup the integration using integration UI instead of configuration.yml.")
+    _LOGGER.warning(
+        "DEPRECATED: Setup the integration using integration UI instead of configuration.yml."
+    )
     client = CloudClient(config[CONF_EMAIL], config.get(CONF_PASSWORD))
     entities = map(PureI9.create, client.getRobots())
     add_entities(entities, update_before_add=True)
