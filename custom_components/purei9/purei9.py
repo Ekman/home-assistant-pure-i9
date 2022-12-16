@@ -65,6 +65,7 @@ POWER_MODE_POWER = "POWER"
 POWER_MODE_QUIET = "QUIET"
 POWER_MODE_SMART = "SMART"
 
+# pylint: disable=too-many-instance-attributes
 class Params:
     """Data available in the state"""
     battery: int = 100
