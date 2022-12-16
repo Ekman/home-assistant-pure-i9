@@ -12,18 +12,15 @@ async def async_setup_entry(hass, config_entry) -> bool:
 
     robots = await hass.async_add_executor_job(purei9_client.getRobots)
 
-    entities_meta = []
+    coords = []
 
     for robot in robots:
         coord = coordinator.PureI9Coordinator(hass, robot)
         await coord.async_config_entry_first_refresh()
-        entities_meta.append({
-            "coordinator": coord,
-            "robot": robot
-        })
+        coords.append(coord)
 
     hass.data.setdefault(const.DOMAIN, {})
-    hass.data[const.DOMAIN][config_entry.entry_id] = {"entities_meta": entities_meta}
+    hass.data[const.DOMAIN][config_entry.entry_id] = {const.COORDINATORS: coords}
 
     await hass.config_entries.async_forward_entry_setups(config_entry, ["vacuum"])
     

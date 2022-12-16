@@ -23,6 +23,11 @@ class PureI9Coordinator(DataUpdateCoordinator):
         )
         self._robot = robot
 
+    @property
+    def robot(self) -> str:
+        """Immutable robot"""
+        return self._robot
+
     async def _async_update_data(self):
         """Fetch data from Pure i9."""
         try:
