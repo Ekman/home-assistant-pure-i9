@@ -19,6 +19,7 @@ from homeassistant.components.vacuum import (
     STATE_RETURNING,
     STATE_IDLE
 )
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloudv2 import CloudClient, CloudRobot
 from purei9_unofficial.common import DustbinStates
@@ -45,27 +46,29 @@ def setup_platform(_hass, config, add_entities, _discovery_info=None) -> None:
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Initial setup for the workers. Download and identify all workers."""
-    email = config_entry.data.get(CONF_EMAIL)
-    password = config_entry.data.get(CONF_PASSWORD)
-
-    purei9_client = CloudClient(email, password)
-    robots = await hass.async_add_executor_job(purei9_client.getRobots)
-
+    data = hass.data[const.DOMAIN][config_entry.entry_id]
+    
     entities = []
 
-    for robot in robots:
-        entity = await hass.async_add_executor_job(PureI9.create, robot)
-        entities.append(entity)
+    for entity_meta in data["entities_meta"]:
+        coordinator = entity_meta["coordinator"]
+        robot = entity_meta["robot"]
+
+        entities.append(
+            PureI9(coordinator, robot, coordinator.data)
+        )
 
     async_add_entities(entities, update_before_add=True)
 
-class PureI9(StateVacuumEntity):
+class PureI9(CoordinatorEntity, StateVacuumEntity):
     """The main Pure i9 vacuum entity"""
     def __init__(
             self,
+            coordinator,
             robot: CloudRobot,
             params: purei9.Params,
         ):
+        super().__init__(coordinator)
         self._robot = robot
         self._params = params
         # The Pure i9 library caches results. When we do state updates, the next update
@@ -208,30 +211,29 @@ class PureI9(StateVacuumEntity):
         self._robot.setpowermode(purei9.fan_speed_to_purei9(fan_speed))
         self._assumed_next_fan_speed = fan_speed
 
-    def update(self) -> None:
+    def _handle_coordinator_update(self) -> None:
         """
         Called by Home Assistant asking the vacuum to update to the latest state.
         Can contain IO code.
         """
-        pure_i9_battery = self._robot.getbattery()
-        purei9_dustbin = self._robot.getdustbinstatus()
+        params = self.coordinator.data
 
         if self._assumed_next_state is not None:
             self._params.state = self._assumed_next_state
             self._assumed_next_state = None
         else:
-            self._params.state = purei9.state_to_hass(
-                self._robot.getstatus(), pure_i9_battery, purei9_dustbin)
+            self._params.state = params.state
 
         if self._assumed_next_fan_speed is not None:
             self._params.fan_speed = self._assumed_next_fan_speed
             self._assumed_next_fan_speed = None
         else:
-            self._params.fan_speed = purei9.fan_speed_to_hass(
-                self._params.fan_speed_list, self._robot.getpowermode())
+            self._params.fan_speed = params.fan_speed
 
-        self._params.name = self._robot.getname()
-        self._params.battery = purei9.battery_to_hass(pure_i9_battery)
-        self._params.available = self._robot.isconnected()
-        self._params.firmware = self._robot.getfirmware()
-        self._params.dustbin = purei9.dustbin_to_hass(purei9_dustbin)
+        self._params.name = params.name
+        self._params.battery = params.battery
+        self._params.available = params.available
+        self._params.firmware = params.firmware
+        self._params.dustbin = params.dustbin
+
+        self.async_write_ha_state()
