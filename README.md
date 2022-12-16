@@ -31,14 +31,14 @@ Install using [Home Assistant Community Store (HACS)](https://hacs.xyz/).
 
 ## Configuration
 
-Add this to your Home Assistant configuration:
+## Configuration
 
-``` yaml
-vacuum:
-  - platform: purei9
-    email: me@example.com
-    password: example
-```
+Follow these steps to configure the integration:
+
+1. Navigate to `Settings -> Devices & Services -> Integrations`.
+2. Click `+ Add Integration`.
+3. Find **Electrolux Pure i9**.
+4. Enter your Electrolux e-mail and password.
 
 For more information on what the integration can do [read the manual](MANUAL.md).
 
