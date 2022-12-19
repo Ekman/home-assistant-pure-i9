@@ -60,4 +60,8 @@ class PureI9Coordinator(DataUpdateCoordinator):
         params.firmware = self._robot.getfirmware()
         params.dustbin = purei9.dustbin_to_hass(purei9_dustbin)
 
+        purei9_cleaning_sessions = self._robot.getCleaningSessions()
+        _LOGGER.debug("Downloading cleaning sessions: %s", purei9_cleaning_sessions)
+        params.last_cleaning_session = purei9_cleaning_sessions[0] if purei9_cleaning_sessions else None
+
         return params
