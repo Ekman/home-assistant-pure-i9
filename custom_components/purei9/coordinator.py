@@ -31,7 +31,7 @@ class PureI9Coordinator(DataUpdateCoordinator):
     async def _async_update_data(self):
         """Fetch data from Pure i9."""
         try:
-            async with async_timeout.timeout(10):
+            async with async_timeout.timeout(timedelta(seconds=10)):
                 return await self.hass.async_add_executor_job(
                     self.update_and_create_params
                 )
@@ -60,11 +60,11 @@ class PureI9Coordinator(DataUpdateCoordinator):
         params.firmware = self._robot.getfirmware()
         params.dustbin = purei9.dustbin_to_hass(purei9_dustbin)
 
-        purei9_cleaning_sessions = self._robot.getCleaningSessions()
-        params.last_cleaning_session = (
-            purei9_cleaning_sessions[0]
-            if purei9_cleaning_sessions
-            else None
-        )
+        # purei9_cleaning_sessions = self._robot.getCleaningSessions()
+        #params.last_cleaning_session = (
+        #    purei9_cleaning_sessions[0]
+        #    if purei9_cleaning_sessions
+        #    else None
+        #)
 
         return params
