@@ -65,6 +65,13 @@ POWER_MODE_POWER = "POWER"
 POWER_MODE_QUIET = "QUIET"
 POWER_MODE_SMART = "SMART"
 
+class Dustbin(Enum):
+    """Contains possible values for the dustbin"""
+    UNKNOWN = 1
+    CONNECTED = 2
+    DISCONNECTED = 3
+    FULL = 4
+
 # pylint: disable=too-many-instance-attributes
 class Params:
     """Data available in the state"""
@@ -73,7 +80,7 @@ class Params:
     available: bool = True
     firmware: str = None
     fan_speed: str = POWER_MODE_POWER
-    dustbin: DustbinStates = DustbinStates.connected
+    dustbin: Dustbin = Dustbin.CONNECTED
 
     def __init__(self, unique_id: str, name: str, fan_speed_list: List[str]):
         self._unique_id = unique_id
@@ -123,13 +130,6 @@ def fan_speed_to_hass(fan_speed_list: List[str], fan_speed_purei9: PowerMode) ->
         return POWER_MODE_ECO
 
     return POWER_MODE_POWER
-
-class Dustbin(Enum):
-    """Contains possible values for the dustbin"""
-    UNKNOWN = 1
-    CONNECTED = 2
-    DISCONNECTED = 3
-    FULL = 4
 
 def dustbin_to_hass(dustbin: DustbinStates) -> Dustbin:
     """Conver the Pure i9 dustbin into an internal representation"""

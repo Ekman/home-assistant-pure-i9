@@ -22,7 +22,6 @@ from homeassistant.components.vacuum import (
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloudv2 import CloudClient, CloudRobot
-from purei9_unofficial.common import DustbinStates
 from . import purei9, const
 
 _LOGGER = logging.getLogger(__name__)
@@ -114,10 +113,10 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         """If the vacuum reports STATE_ERROR then explain the error"""
         # According to documentation then this is required if the entity
         # can report error states. However, I can't fetch any error message.
-        if self._params.dustbin == DustbinStates.empty:
+        if self._params.dustbin == purei9.Dustbin.DISCONNECTED:
             return "The dustbin is missing"
 
-        if self._params.dustbin == DustbinStates.full:
+        if self._params.dustbin == purei9.Dustbin.FULL:
             return "The dustbin needs to be emptied"
 
         return "Error"
@@ -298,10 +297,10 @@ class PureI9Legacy(StateVacuumEntity):
         """If the vacuum reports STATE_ERROR then explain the error"""
         # According to documentation then this is required if the entity
         # can report error states. However, I can't fetch any error message.
-        if self._params.dustbin == DustbinStates.empty:
+        if self._params.dustbin == purei9.Dustbin.DISCONNECTED:
             return "The dustbin is missing"
 
-        if self._params.dustbin == DustbinStates.full:
+        if self._params.dustbin == purei9.Dustbin.FULL:
             return "The dustbin needs to be emptied"
 
         return "Error"
