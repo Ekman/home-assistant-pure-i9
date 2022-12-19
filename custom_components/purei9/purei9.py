@@ -1,7 +1,13 @@
 """Pure i9 business logic"""
 from typing import List
 from enum import Enum
-from purei9_unofficial.common import BatteryStatus, RobotStates, PowerMode, DustbinStates, CleaningSession
+from purei9_unofficial.common import (
+    BatteryStatus,
+    RobotStates,
+    PowerMode,
+    DustbinStates,
+    CleaningSession,
+)
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
     STATE_DOCKED,
