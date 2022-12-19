@@ -12,6 +12,7 @@ from homeassistant.components.vacuum import (
     SUPPORT_STATE,
     SUPPORT_STOP,
     SUPPORT_FAN_SPEED,
+    SUPPORT_CLEAN_SPOT,
     StateVacuumEntity,
     PLATFORM_SCHEMA,
     STATE_CLEANING,
@@ -68,6 +69,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
             | SUPPORT_PAUSE
             | SUPPORT_STATE
             | SUPPORT_FAN_SPEED
+            | SUPPORT_CLEAN_SPOT
         )
 
     @property
@@ -182,6 +184,9 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         )
         self._params.fan_speed = fan_speed
         self.async_write_ha_state()
+    
+    async def async_clean_spot(self, **kwargs):
+        _LOGGER.debug("Clean spot: %s", kwargs)
 
     def _handle_coordinator_update(self):
         """
