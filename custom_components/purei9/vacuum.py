@@ -141,7 +141,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
                 else None
             ),
             "last_cleaning_stop": (
-                self._params.last_cleaning_session.starttime 
+                self._params.last_cleaning_session.starttime
                     + timedelta(seconds=self._params.last_cleaning_session.duration)
                 if self._params.last_cleaning_session is not None
                 else None
