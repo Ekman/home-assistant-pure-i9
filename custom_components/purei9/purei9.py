@@ -86,12 +86,8 @@ class Params:
     available: bool = True
     firmware: str = None
     fan_speed: str = POWER_MODE_POWER
-<<<<<<< HEAD
     dustbin: Dustbin = Dustbin.CONNECTED
-=======
-    dustbin: DustbinStates = DustbinStates.connected
     last_cleaning_session: CleaningSession = None
->>>>>>> 011a814 (Add cleaning attributes)
 
     def __init__(self, unique_id: str, name: str, fan_speed_list: List[str]):
         self._unique_id = unique_id
