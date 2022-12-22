@@ -1,4 +1,5 @@
 """Control your Electrolux Purei9 vacuum robot"""
+import asyncio
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloudv2 import CloudClient
 from . import const, coordinator
@@ -13,15 +14,29 @@ async def async_setup_entry(hass, config_entry) -> bool:
     purei9_client = CloudClient(email, password)
 
     robots = await hass.async_add_executor_job(purei9_client.getRobots)
+    robots = list(robots)
 
-    coords = []
+    # Download and cache all robots
+    await asyncio.gather(
+        *map(
+            lambda robot: hass.async_add_executor_job(robot.getid),
+            robots
+        )
+    )
 
-    for robot in robots:
-        unique_id = await hass.async_add_executor_job(robot.getid)
-        coord = coordinator.PureI9Coordinator(hass, unique_id, robot)
-        await coord.async_config_entry_first_refresh()
-        coords.append(coord)
+    # Create the coordinators
+    coords = list(
+        map(
+            lambda robot: coordinator.PureI9Coordinator(hass, robot.getid(), robot),
+            robots
+        )
+    )
 
+    await asyncio.gather(
+        *[coord.async_config_entry_first_refresh() for coord in coords]
+    )
+
+    # Continue with setting up devices and entities
     hass.data.setdefault(const.DOMAIN, {})
     hass.data[const.DOMAIN][config_entry.entry_id] = {const.COORDINATORS: coords}
 

@@ -1,6 +1,7 @@
 """Home Assistant vacuum entity"""
 from typing import List, Optional, Any, Mapping
 from datetime import timedelta
+import asyncio
 import logging
 import voluptuous as vol
 from homeassistant.helpers.entity import DeviceInfo

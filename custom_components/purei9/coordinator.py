@@ -36,6 +36,7 @@ class PureI9Coordinator(DataUpdateCoordinator):
                     self.update_and_create_params
                 )
         except Exception as ex:
+            _LOGGER.error("Could not update data for \"%s\" due to: %s", self.name, ex)
             raise UpdateFailed from ex
 
     def update_and_create_params(self):
