@@ -61,10 +61,7 @@ class PureI9Coordinator(DataUpdateCoordinator):
         params.dustbin = purei9.dustbin_to_hass(purei9_dustbin)
 
         purei9_cleaning_sessions = self._robot.getCleaningSessions()
-        params.last_cleaning_session = (
-            purei9_cleaning_sessions[:0]
-            if purei9_cleaning_sessions
-            else None
-        )
+        if purei9_cleaning_sessions:
+            params.last_cleaning_session = purei9_cleaning_sessions[:0]
 
         return params
