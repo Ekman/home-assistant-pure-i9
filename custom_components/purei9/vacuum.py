@@ -35,12 +35,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """Initial setup for the workers. Download and identify all workers."""
     data = hass.data[const.DOMAIN][config_entry.entry_id]
 
-    entities = map(
-        lambda coord: PureI9(coord, coord.robot, coord.data),
-        data[const.COORDINATORS]
+    async_add_entities(
+        [PureI9(coord, coord.robot, coord.data) for coord in data[const.COORDINATORS]]
     )
-
-    async_add_entities(entities)
 
 class PureI9(CoordinatorEntity, StateVacuumEntity):
     """The main Pure i9 vacuum entity"""

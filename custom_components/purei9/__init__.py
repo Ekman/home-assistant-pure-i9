@@ -18,19 +18,11 @@ async def async_setup_entry(hass, config_entry) -> bool:
 
     # Download and cache all robots
     await asyncio.gather(
-        *map(
-            lambda robot: hass.async_add_executor_job(robot.getid),
-            robots
-        )
+        *[hass.async_add_executor_job(robot.getid) for robot in robots]
     )
 
     # Create the coordinators
-    coords = list(
-        map(
-            lambda robot: coordinator.PureI9Coordinator(hass, robot.getid(), robot),
-            robots
-        )
-    )
+    coords = [coordinator.PureI9Coordinator(hass, robot.getid(), robot) for robot in robots]
 
     await asyncio.gather(
         *[coord.async_config_entry_first_refresh() for coord in coords]
