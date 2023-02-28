@@ -36,6 +36,7 @@ class PureI9Coordinator(DataUpdateCoordinator):
                     self.update_and_create_params
                 )
         except Exception as ex:
+            _LOGGER.error("Could not update data for \"%s\" due to: %s", self.name, ex)
             raise UpdateFailed from ex
 
     def update_and_create_params(self):
@@ -60,4 +61,22 @@ class PureI9Coordinator(DataUpdateCoordinator):
         params.firmware = self._robot.getfirmware()
         params.dustbin = purei9.dustbin_to_hass(purei9_dustbin)
 
+        params.last_cleaning_session = self.get_last_cleaning_session()
+        _LOGGER.debug("Last cleaning session: %s", params.last_cleaning_session)
+
         return params
+
+    def get_last_cleaning_session(self):
+        """Get the latest cleaning session"""
+        purei9_cleaning_sessions = self._robot.getCleaningSessions()
+        _LOGGER.info(
+            "Downloaded \"%d\" cleaning sessions for \"%s\".",
+            len(purei9_cleaning_sessions),
+            self._robot.getname()
+        )
+
+        return (
+            purei9_cleaning_sessions[0]
+            if purei9_cleaning_sessions
+            else None
+        )

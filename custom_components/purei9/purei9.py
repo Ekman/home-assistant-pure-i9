@@ -1,7 +1,13 @@
 """Pure i9 business logic"""
 from typing import List
 from enum import Enum
-from purei9_unofficial.common import BatteryStatus, RobotStates, PowerMode, DustbinStates
+from purei9_unofficial.common import (
+    BatteryStatus,
+    RobotStates,
+    PowerMode,
+    DustbinStates,
+    CleaningSession,
+)
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
     STATE_DOCKED,
@@ -81,6 +87,7 @@ class Params:
     firmware: str = None
     fan_speed: str = POWER_MODE_POWER
     dustbin: Dustbin = Dustbin.CONNECTED
+    last_cleaning_session: CleaningSession = None
 
     def __init__(self, unique_id: str, name: str, fan_speed_list: List[str]):
         self._unique_id = unique_id

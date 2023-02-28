@@ -35,12 +35,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """Initial setup for the workers. Download and identify all workers."""
     data = hass.data[const.DOMAIN][config_entry.entry_id]
 
-    entities = map(
-        lambda coord: PureI9(coord, coord.robot, coord.data),
-        data[const.COORDINATORS]
+    async_add_entities(
+        [PureI9(coord, coord.robot, coord.data) for coord in data[const.COORDINATORS]]
     )
-
-    async_add_entities(entities)
 
 class PureI9(CoordinatorEntity, StateVacuumEntity):
     """The main Pure i9 vacuum entity"""
@@ -133,7 +130,25 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any]:
-        return {"dustbin": self._params.dustbin.name}
+        return {
+            "dustbin": self._params.dustbin.name,
+            "last_cleaning_start": (
+                self._params.last_cleaning_session.endtime
+                    - timedelta(seconds=self._params.last_cleaning_session.duration)
+                if self._params.last_cleaning_session is not None
+                else None
+            ),
+            "last_cleaning_stop": (
+                self._params.last_cleaning_session.endtime
+                if self._params.last_cleaning_session is not None
+                else None
+            ),
+            "last_cleaning_duration_seconds": (
+                self._params.last_cleaning_session.duration
+                if self._params.last_cleaning_session is not None
+                else None
+            )
+        }
 
     async def async_start(self):
         """Start cleaning"""
