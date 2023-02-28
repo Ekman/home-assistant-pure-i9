@@ -1,10 +1,7 @@
 """Home Assistant last cleaning start sensor entity"""
 from datetime import timedelta
 import logging
-from homeassistant.components.sensor import (
-    SensorEntity,
-    SensorDeviceClass
-)
+from homeassistant.components.sensor import SensorEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from . import purei9, const
 
@@ -54,7 +51,7 @@ class PureI9LastCleaningStart(CoordinatorEntity, SensorEntity):
     @property
     def device_class(self):
         """The device class of the entity"""
-        return SensorDeviceClass.DATE
+        return "date"
 
     @property
     def native_value(self):
@@ -101,7 +98,7 @@ class PureI9LastCleaningStop(CoordinatorEntity, SensorEntity):
     @property
     def device_class(self):
         """The device class of the entity"""
-        return SensorDeviceClass.DATE
+        return "date"
 
     @property
     def native_value(self):
@@ -147,7 +144,7 @@ class PureI9LastCleaningDuration(CoordinatorEntity, SensorEntity):
     @property
     def device_class(self):
         """The device class of the entity"""
-        return SensorDeviceClass.DURATION
+        return "duration"
 
     @property
     def native_unit_of_measurement(self):
