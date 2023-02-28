@@ -60,13 +60,14 @@ class PureI9Coordinator(DataUpdateCoordinator):
         params.available = self._robot.isconnected()
         params.firmware = self._robot.getfirmware()
         params.dustbin = purei9.dustbin_to_hass(purei9_dustbin)
-        params.last_cleaning_session = self.get_last_cleaning_session()
 
+        params.last_cleaning_session = self.get_last_cleaning_session()
         _LOGGER.debug("Last cleaning session: %s", params.last_cleaning_session)
 
         return params
 
     def get_last_cleaning_session(self):
+        """Get the latest cleaning session"""
         purei9_cleaning_sessions = self._robot.getCleaningSessions()
         _LOGGER.info(
             "Downloaded \"%d\" cleaning sessions for \"%s\".",
