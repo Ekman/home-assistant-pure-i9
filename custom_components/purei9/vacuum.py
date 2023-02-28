@@ -69,16 +69,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
     @property
     def device_info(self) -> DeviceInfo:
         """Return information for the device registry"""
-        # See: https://developers.home-assistant.io/docs/device_registry_index/
-        return {
-            "identifiers": {(const.DOMAIN, self._params.unique_id)},
-            "name": self._params.name,
-            "manufacturer": const.MANUFACTURER,
-            "sw_version": self._params.firmware,
-            # We don't know the exact model, i.e. Pure i9 or Pure i9.2,
-            # so only report a default model
-            "default_model": const.MODEL
-        }
+        return purei9.create_device_attrs(self._params)
 
     @property
     def unique_id(self) -> str:
@@ -130,25 +121,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any]:
-        return {
-            "dustbin": self._params.dustbin.name,
-            "last_cleaning_start": (
-                self._params.last_cleaning_session.endtime
-                    - timedelta(seconds=self._params.last_cleaning_session.duration)
-                if self._params.last_cleaning_session is not None
-                else None
-            ),
-            "last_cleaning_stop": (
-                self._params.last_cleaning_session.endtime
-                if self._params.last_cleaning_session is not None
-                else None
-            ),
-            "last_cleaning_duration_seconds": (
-                self._params.last_cleaning_session.duration
-                if self._params.last_cleaning_session is not None
-                else None
-            )
-        }
+        return { "dustbin": self._params.dustbin.name}
 
     async def async_start(self):
         """Start cleaning"""
