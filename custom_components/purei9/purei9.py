@@ -16,6 +16,7 @@ from homeassistant.components.vacuum import (
     STATE_PAUSED,
     STATE_RETURNING
 )
+from . import const
 
 # See: https://github.com/Phype/purei9_unofficial/blob/master/src/purei9_unofficial/common.py
 PURE_I9_STATE_MAP = {
@@ -150,3 +151,16 @@ def dustbin_to_hass(dustbin: DustbinStates) -> Dustbin:
         return Dustbin.DISCONNECTED
 
     return Dustbin.FULL
+
+def create_device_attrs(params: Params):
+    """Return information for the device registry"""
+    # See: https://developers.home-assistant.io/docs/device_registry_index/
+    return {
+        "identifiers": {(const.DOMAIN, params.unique_id)},
+        "name": params.name,
+        "manufacturer": const.MANUFACTURER,
+        "sw_version": params.firmware,
+        # We don't know the exact model, i.e. Pure i9 or Pure i9.2,
+        # so only report a default model
+        "default_model": const.MODEL
+    }
