@@ -1,7 +1,7 @@
 """Control your Electrolux Purei9 vacuum robot"""
 import asyncio
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
-from purei9_unofficial.cloudv2 import CloudClient
+from purei9_unofficial.cloudv3 import CloudClient
 from . import const, coordinator
 
 PLATFORMS = ["vacuum", "sensor"]
