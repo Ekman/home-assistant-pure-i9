@@ -2,7 +2,7 @@
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
-from purei9_unofficial.cloudv2 import CloudClient
+from purei9_unofficial.cloudv3 import CloudClient
 from .const import DOMAIN
 
 class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):

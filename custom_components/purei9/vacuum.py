@@ -21,7 +21,7 @@ from homeassistant.components.vacuum import (
 )
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
-from purei9_unofficial.cloudv2 import CloudClient, CloudRobot
+from purei9_unofficial.cloudv3 import CloudClient, CloudRobot
 from . import purei9, const
 
 _LOGGER = logging.getLogger(__name__)
