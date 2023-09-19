@@ -162,5 +162,5 @@ def create_device_attrs(params: Params):
         "sw_version": params.firmware,
         # We don't know the exact model, i.e. Pure i9 or Pure i9.2,
         # so only report a default model
-        "default_model": const.MODEL
+        "model": const.MODEL
     }

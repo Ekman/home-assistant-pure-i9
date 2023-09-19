@@ -252,7 +252,7 @@ class PureI9Legacy(StateVacuumEntity):
             "sw_version": self._params.firmware,
             # We don't know the exact model, i.e. Pure i9 or Pure i9.2,
             # so only report a default model
-            "default_model": const.MODEL
+            "model": const.MODEL
         }
 
     @property
