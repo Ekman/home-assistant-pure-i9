@@ -1,5 +1,5 @@
 """Home Assistant vacuum entity"""
-from typing import List, Optional, Any, Mapping
+from typing import List, Optional, Any, Mapping, Dict
 from datetime import timedelta
 import logging
 import voluptuous as vol
@@ -12,6 +12,7 @@ from homeassistant.components.vacuum import (
     SUPPORT_STATE,
     SUPPORT_STOP,
     SUPPORT_FAN_SPEED,
+    SUPPORT_SEND_COMMAND,
     StateVacuumEntity,
     PLATFORM_SCHEMA,
     STATE_CLEANING,
@@ -64,6 +65,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
             | SUPPORT_PAUSE
             | SUPPORT_STATE
             | SUPPORT_FAN_SPEED
+            | SUPPORT_SEND_COMMAND
         )
 
     @property
@@ -169,6 +171,55 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         )
         self._params.fan_speed = fan_speed
         self.async_write_ha_state()
+        
+    def send_command(self, command: str, params: Optional[Dict[str, Any]] = None, **kwargs: Any):
+        """Send a custom command to the robot. Currently only used to clean specific zones."""
+        if command == "clean_zones":
+        
+            # Check for required input data
+            if params == None:
+                _LOGGER.error('need "params" of type Dict for command "clean_zones"')
+                return
+            if not("map" in params):
+                _LOGGER.error('need "params.map" of type String for command "clean_zones"')
+                return
+            if not("zones" in params):
+                _LOGGER.error('need "params.zones" of type List for command "clean_zones"')
+                return
+            
+            cloudmap   = None # CloudMap
+            cloudzones = []   # CloudZone.id
+        
+            # Search all maps the robot knows for the one we are looking for
+            for m in self._robot.getMaps():
+                if params["map"] == m.name:
+                    cloudmap = m
+                    break
+            if cloudmap == None:
+                _LOGGER.error('map "' + params["map"] + '" does not exist')
+                return
+            
+            
+            # Search all zones inside this map for the ones we are looking for
+            for zone_name in params["zones"]:
+                cloudzone = None
+                for zone in cloudmap.zones:
+                    if zone.name == zone_name:
+                        cloudzone = zone
+                        break
+                if cloudzone == None:
+                    _LOGGER.error('zone "' + zone_name + '" does not exist')
+                    return
+                else:
+                    cloudzones.append(cloudzone.id)
+            
+            # Everything done, now send the robot to clean those maps and zones we found
+            self._robot.cleanZones(cloudmap.id, cloudzones)
+            
+        else:
+            _LOGGER.error('command "' + command + '" not implemented')
+            
+        return
 
     def _handle_coordinator_update(self):
         """
