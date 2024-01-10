@@ -197,8 +197,8 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
  #       except exception.CommandParamException as ex:
  #           _LOGGER.error(
  #               "Need parameter \"%s\" of type \"%s\" for command \"%s\".",
-  #              ex.name,
-  #              ex.type,
+  #              ex.param_name,
+  #              ex.param_type,
   #              cmd.name
   #          )
   #      except exception.CommandException as ex:

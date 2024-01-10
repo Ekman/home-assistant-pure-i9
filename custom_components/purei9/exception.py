@@ -8,7 +8,7 @@ class CommandException(PureI9Exception):
 
 class CommandParamException(PureI9Exception):
     """Exception indicating invalid vacuum command parameter"""
-    def __init__(self, name, type):
+    def __init__(self, param_name, param_type):
         super().__init__()
-        self.name = name
-        self.type = type
+        self.param_name = param_name
+        self.param_type = param_type
