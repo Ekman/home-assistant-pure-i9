@@ -1,5 +1,5 @@
 """Pure i9 business logic"""
-from typing import List
+from typing import List, TypedDict
 from enum import Enum
 from purei9_unofficial.common import (
     BatteryStatus,
@@ -79,6 +79,29 @@ class Dustbin(Enum):
     DISCONNECTED = 3
     FULL = 4
 
+class ParamsIdName(TypedDict):
+    id: str
+    name: str
+
+class ParamsZone(ParamsIdName):
+    id: str
+
+def params_zone_create(zone) -> ParamsZone:
+    return {
+        "id": zone.id,
+        "name": zone.name
+    }
+
+class ParamsMap(ParamsIdName):
+    zones: List[ParamsZone]
+
+def params_map_create(m) -> ParamsMap:
+    return {
+        "id": m.id,
+        "name": m.name,
+        "zones": list(map(params_zone_create, m.zones))
+    }
+
 # pylint: disable=too-many-instance-attributes
 class Params:
     """Data available in the state"""
@@ -89,6 +112,7 @@ class Params:
     fan_speed: str = POWER_MODE_POWER
     dustbin: Dustbin = Dustbin.CONNECTED
     last_cleaning_session: CleaningSession = None
+    maps: List[ParamsMap] = []
 
     def __init__(self, unique_id: str, name: str, fan_speed_list: List[str]):
         self._unique_id = unique_id

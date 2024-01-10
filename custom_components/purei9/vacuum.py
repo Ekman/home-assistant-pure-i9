@@ -23,7 +23,7 @@ from homeassistant.components.vacuum import (
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloudv3 import CloudClient, CloudRobot
-from . import purei9, const
+from . import purei9, const, command, exception
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -123,7 +123,10 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any]:
-        return { "dustbin": self._params.dustbin.name}
+        return {
+            "dustbin": self._params.dustbin.name,
+            "maps": self._params.maps,
+        }
 
     async def async_start(self):
         """Start cleaning"""
@@ -172,51 +175,25 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         self._params.fan_speed = fan_speed
         self.async_write_ha_state()
 
-    def send_command(self, command: str, params: Optional[Dict[str, Any]] = None, **kwargs: Any):
+    async def async_send_command(self, command_name: str, command_params: Optional[Dict[str, Any]] = None, **kwargs: Any):
         """Send a custom command to the robot. Currently only used to clean specific zones."""
-        if command == "clean_zones":
-            # Check for required input data
-            if params is None:
-                _LOGGER.error('need "params" of type Dict for command "clean_zones"')
-                return
-            if not "map" in params:
-                _LOGGER.error('need "params.map" of type String for command "clean_zones"')
-                return
-            if not "zones" in params:
-                _LOGGER.error('need "params.zones" of type List for command "clean_zones"')
-                return
+        cmd = command.create_command(command_name)
 
-            cloudmap   = None # CloudMap
-            cloudzones = []   # CloudZone.id
+        if cmd is None:
+            _LOGGER.error("Command \"%s\" not implemented.", command_name)
+            return
 
-            # Search all maps the robot knows for the one we are looking for
-            for a_map in self._robot.getMaps():
-                if params["map"] == a_map.name:
-                    cloudmap = a_map
-                    break
-            if cloudmap == None:
-                _LOGGER.error('map "%s" does not exist', params["map"])
-                return
+        try:
+            cmd.valid_or_throw(command_params)
 
-            # Search all zones inside this map for the ones we are looking for
-            for zone_name in params["zones"]:
-                cloudzone = None
-                for zone in cloudmap.zones:
-                    if zone.name == zone_name:
-                        cloudzone = zone
-                        break
-                if cloudzone is None:
-                    _LOGGER.error('zone "%s" does not exist', zone_name)
-                    return
-                cloudzones.append(cloudzone.id)
-
-            # Everything done, now send the robot to clean those maps and zones we found
-            self._robot.cleanZones(cloudmap.id, cloudzones)
-
-        else:
-            _LOGGER.error('command "%s" not implemented', command)
-
-        return
+            await cmd.execute(command_params)
+        except exception.CommandParamException as ex:
+            _LOGGER.error(
+                "need parameter \"%s\" of type \"%s\" for command \"%s\".",
+                ex.name,
+                ex.type,
+                cmd.name
+            )
 
     def _handle_coordinator_update(self):
         """
