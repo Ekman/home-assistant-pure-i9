@@ -1,6 +1,5 @@
 """Vacuum commands"""
 from typing import Protocol, Dict, Any
-from asyncio import Future
 from . import exception, utility
 
 COMMAND_CLEAN_ZONES = "clean_zones"
@@ -8,6 +7,7 @@ COMMAND_CLEAN_ZONES = "clean_zones"
 class CommandBase(Protocol):
     """Base class for all vacuum commands"""
     def __init__(self, hass, robot, params):
+        super().__init__()
         self.hass = hass
         self.robot = robot
         self.params = params
@@ -22,11 +22,12 @@ class CommandBase(Protocol):
         return
 
     async def execute(self, params: Dict[str, Any]) -> None:
+        """Execute the command"""
         return None
 
 class CommandCleanZones(CommandBase):
     """Command to clean zones"""
-    def __init(self, hass, robot, params):
+    def __init__(self, hass, robot, params):
         super().__init__(hass, robot, params)
 
     @property
