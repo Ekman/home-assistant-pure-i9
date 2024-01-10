@@ -12,11 +12,6 @@ class CommandBase(Protocol):
         self.robot = robot
         self.params = params
 
-    @property
-    def name(self) -> str:
-        """Name of command"""
-        return "vacuum_command"
-
     def input_valid_or_throw(self, params: Dict[str, Any]) -> None:
         """Check for required input data"""
         return
@@ -27,10 +22,6 @@ class CommandBase(Protocol):
 
 class CommandCleanZones(CommandBase):
     """Command to clean zones"""
-    @property
-    def name(self) -> str:
-        return COMMAND_CLEAN_ZONES
-
     def input_valid_or_throw(self, params: Dict[str, Any]) -> None:
         if params is None:
             raise exception.CommandParamException("params", "Dict")

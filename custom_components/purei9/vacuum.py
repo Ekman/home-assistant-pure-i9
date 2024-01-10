@@ -199,7 +199,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
                 "Need parameter \"%s\" of type \"%s\" for command \"%s\".",
                 ex.param_name,
                 ex.param_type,
-                cmd.name
+                command
             )
         except exception.CommandException as ex:
             _LOGGER.error("Could not execute command due to: %s", ex)
