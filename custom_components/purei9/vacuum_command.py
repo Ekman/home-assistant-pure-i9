@@ -27,15 +27,11 @@ class CommandBase(Protocol):
 
 class CommandCleanZones(CommandBase):
     """Command to clean zones"""
-    def __init__(self, hass, robot, params):
-        super().__init__(hass, robot, params)
-
     @property
     def name(self) -> str:
         return COMMAND_CLEAN_ZONES
 
     def valid_or_throw(self, params: Dict[str, Any]) -> None:
-        """Check for required input data"""
         if params is None:
             raise exception.CommandParamException("params", "Dict")
 
