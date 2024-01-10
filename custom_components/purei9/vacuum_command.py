@@ -5,6 +5,7 @@ from . import exception, utility
 COMMAND_CLEAN_ZONES = "clean_zones"
 
 class CommandBase(Protocol):
+    """Base class for all vacuum commands"""
     def __init(self, hass, robot, params):
         self.hass = hass
         self.robot = robot
@@ -14,14 +15,15 @@ class CommandBase(Protocol):
     def name(self) -> str:
         return "vacuum_command"
 
-    def valid_or_throw(params: Dict[str, Any]) -> None:
+    def valid_or_throw(self, params: Dict[str, Any]) -> None:
         """Check for required input data"""
         return
 
-    def execute() -> Future:
+    async def execute(self, params: Dict[str, Any]) -> None:
         return None
 
 class CommandCleanZones(CommandBase):
+    """Command to clean zones"""
     def __init(self, hass, robot, params):
         super().__init__(hass, robot, params)
 
@@ -40,24 +42,25 @@ class CommandCleanZones(CommandBase):
         if not "zones" in params:
             raise exception.CommandParamException("zones", "List")
 
-    async def execute(self, params: Dict[str, Any]) -> Future:
+    async def execute(self, params: Dict[str, Any]) -> None:
         map_name = params["map"]
 
-        m = utility.first_or_default(self._params.maps, map_name)
+        _map = utility.first_or_default(self.params.maps, map_name)
 
-        if m is None:
+        if _map is None:
             raise exception.CommandException(f"Map \"{map_name}\" does not exist.")
 
         # Search all zones inside this map for the ones we are looking for
-        zone_ids = [zone.id for zone in m.zones if zone.name in params["zones"]]
+        zone_ids = [zone.id for zone in _map.zones if zone.name in params["zones"]]
 
         if len(zone_ids) == 0:
-            raise exception.CommandException(f"Could not find any zones in map \"{m.name}\".")
+            raise exception.CommandException(f"Could not find any zones in map \"{map_name}\".")
 
         # Everything done, now send the robot to clean those maps and zones we found
-        await self.hass.async_add_executor_job(self.robot.cleanZones, m.id, zone_ids)
+        await self.hass.async_add_executor_job(self.robot.cleanZones, _map.id, zone_ids)
 
 def create_command(hass, robot, params, command_name) -> CommandBase:
+    """Creates a command object from a command name"""
     if command_name == COMMAND_CLEAN_ZONES:
         return CommandCleanZones(hass, robot, params)
 
