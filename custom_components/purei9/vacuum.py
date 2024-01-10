@@ -126,8 +126,8 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         """Get extra state attributes"""
         return {
             "dustbin": self._params.dustbin.name,
-            "maps": ", ".join([m.name for m in self._params.maps]),
-            "zones": ", ".join([zone.name for m in self._params.maps for zone in m.zones])
+            "maps": ", ".join([_map["name"] for _map in self._params.maps]),
+            "zones": ", ".join([zone["name"] for _map in self._params.maps for zone in _map.zones])
         }
 
     async def async_start(self):

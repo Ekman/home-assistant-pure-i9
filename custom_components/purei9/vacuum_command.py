@@ -44,13 +44,16 @@ class CommandCleanZones(CommandBase):
     async def execute(self, params: Dict[str, Any]) -> None:
         map_name = params["map"]
 
-        _map = utility.first_or_default(self.params.maps, map_name)
+        _map = utility.first_or_default(
+            self.params.maps,
+            lambda _map: _map["name"] == map_name
+        )
 
         if _map is None:
             raise exception.CommandException(f"Map \"{map_name}\" does not exist.")
 
         # Search all zones inside this map for the ones we are looking for
-        zone_ids = [zone.id for zone in _map.zones if zone.name in params["zones"]]
+        zone_ids = [zone.id for zone in _map["zones"] if zone.name in params["zones"]]
 
         if len(zone_ids) == 0:
             raise exception.CommandException(f"Could not find any zones in map \"{map_name}\".")
