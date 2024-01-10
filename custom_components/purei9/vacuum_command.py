@@ -17,7 +17,7 @@ class CommandBase(Protocol):
         """Name of command"""
         return "vacuum_command"
 
-    def valid_or_throw(self, params: Dict[str, Any]) -> None:
+    def input_valid_or_throw(self, params: Dict[str, Any]) -> None:
         """Check for required input data"""
         return
 
@@ -31,7 +31,7 @@ class CommandCleanZones(CommandBase):
     def name(self) -> str:
         return COMMAND_CLEAN_ZONES
 
-    def valid_or_throw(self, params: Dict[str, Any]) -> None:
+    def input_valid_or_throw(self, params: Dict[str, Any]) -> None:
         if params is None:
             raise exception.CommandParamException("params", "Dict")
 
@@ -63,7 +63,8 @@ class CommandCleanZones(CommandBase):
 
 def create_command(hass, robot, params, command_name) -> CommandBase:
     """Creates a command object from a command name"""
-    if command_name == COMMAND_CLEAN_ZONES:
-        return CommandCleanZones(hass, robot, params)
-
-    return None
+    match command_name:
+        case COMMAND_CLEAN_ZONES:
+            return CommandCleanZones(hass, robot, params)
+        case _:
+            return None

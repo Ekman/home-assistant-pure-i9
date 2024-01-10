@@ -191,7 +191,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
             return
 
         try:
-            cmd.valid_or_throw(params)
+            cmd.input_valid_or_throw(params)
 
             await cmd.execute(params)
         except exception.CommandParamException as ex:
