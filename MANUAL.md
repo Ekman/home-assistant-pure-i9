@@ -37,3 +37,17 @@ You can read the dustbin status of the vacuum using the attribute `dustbin`. The
 | CONNECTED | The vacuum is ready to be used |
 | DISCONNECTED | There is no dustin connected |
 | FULL | It's full and needs to be removed and emptied |
+
+## Additional commands
+
+Additionally, the vacuum supports sending raw commands using the `vacuum.send_command` service. Here's all available commands:
+
+| Name | Description | Parameters |
+| --- | --- | --- |
+| `clean_zones` | Cleans only specific zones. For a list of map- and zone names, see attributes on the vacuum entity. | `map` is the name of the map and `zones` is a list of the name of zones to clean. |
+
+### Example
+
+For instance, if you want to clean the zone "Kitchen" in the map "Upstairs" then you need to send the following command:
+
+![Alt text](docs/example_command.png)
