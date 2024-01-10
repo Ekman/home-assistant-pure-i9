@@ -93,6 +93,7 @@ def params_zone_create(cloud_zone: CloudZone) -> ParamsZone:
     }
 
 class ParamsMap(TypedDict):
+    """Type for a map"""
     id: str
     name: str
     zones: List[ParamsZone]

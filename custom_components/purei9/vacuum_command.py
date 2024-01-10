@@ -6,18 +6,15 @@ from . import exception, utility
 COMMAND_CLEAN_ZONES = "clean_zones"
 
 class CommandBase(Protocol):
-    hass
-    robot
-    params
-
     """Base class for all vacuum commands"""
-    def __init(self, hass, robot, params):
+    def __init__(self, hass, robot, params):
         self.hass = hass
         self.robot = robot
         self.params = params
 
     @property
     def name(self) -> str:
+        """Name of command"""
         return "vacuum_command"
 
     def valid_or_throw(self, params: Dict[str, Any]) -> None:

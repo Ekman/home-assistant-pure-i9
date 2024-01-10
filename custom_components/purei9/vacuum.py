@@ -187,13 +187,13 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         cmd = vacuum_command.create_command(command, self.hass, self._robot, self._params)
 
         if cmd is None:
-           _LOGGER.error("Command \"%s\" not implemented.", command_name)
-           return
+            _LOGGER.error("Command \"%s\" not implemented.", command)
+            return
 
         try:
-            cmd.valid_or_throw(command_params)
+            cmd.valid_or_throw(params)
 
-            await cmd.execute(command_params)
+            await cmd.execute(params)
         except exception.CommandParamException as ex:
             _LOGGER.error(
                 "Need parameter \"%s\" of type \"%s\" for command \"%s\".",
@@ -202,7 +202,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
                 cmd.name
             )
         except exception.CommandException as ex:
-            _LOGGER.error("Could not execute command due to: %s", ex.msg)
+            _LOGGER.error("Could not execute command due to: %s", ex)
 
     def _handle_coordinator_update(self):
         """
