@@ -50,4 +50,4 @@ Additionally, the vacuum supports sending raw commands using the `vacuum.send_co
 
 For instance, if you want to clean the zone "Kitchen" in the map "Upstairs" then you need to send the following command:
 
-![Alt text](docs/example_command.png)
+![Example command that cleans the zone named kitchen in the map named upstairs](docs/example_command.png)
