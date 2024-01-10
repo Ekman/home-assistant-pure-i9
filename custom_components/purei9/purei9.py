@@ -8,6 +8,7 @@ from purei9_unofficial.common import (
     DustbinStates,
     CleaningSession,
 )
+from purei9_unofficial.cloudv3 import CloudZone, CloudMap
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
     STATE_DOCKED,
@@ -80,13 +81,15 @@ class Dustbin(Enum):
     FULL = 4
 
 class ParamsZone(TypedDict):
+    """Type for a map zone"""
     id: str
     name: str
 
-def params_zone_create(zone) -> ParamsZone:
+def params_zone_create(cloud_zone: CloudZone) -> ParamsZone:
+    """Create a map zone from a CloudZone"""
     return {
-        "id": zone.id,
-        "name": zone.name
+        "id": cloud_zone.id,
+        "name": cloud_zone.name
     }
 
 class ParamsMap(TypedDict):
@@ -94,11 +97,12 @@ class ParamsMap(TypedDict):
     name: str
     zones: List[ParamsZone]
 
-def params_map_create(m) -> ParamsMap:
+def params_map_create(cloud_map: CloudMap) -> ParamsMap:
+    """Create a map zone from a CloudRobot"""
     return {
-        "id": m.id,
-        "name": m.name,
-        "zones": list(map(params_zone_create, m.zones))
+        "id": cloud_map.id,
+        "name": cloud_map.name,
+        "zones": list(map(params_zone_create, cloud_map.zones))
     }
 
 # pylint: disable=too-many-instance-attributes
