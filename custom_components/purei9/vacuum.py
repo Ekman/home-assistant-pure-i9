@@ -23,7 +23,7 @@ from homeassistant.components.vacuum import (
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloudv3 import CloudClient, CloudRobot
-from . import purei9, const, command, exception
+from . import purei9, const, vacuum_command, exception
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -123,9 +123,11 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any]:
+        """Get extra state attributes"""
         return {
             "dustbin": self._params.dustbin.name,
-            "maps": self._params.maps,
+            "maps": ", ".join([m.name for m in self._params.maps]),
+            "zones": ", ".join([zone.name for m in self._params.maps for zone in m.zones])
         }
 
     async def async_start(self):
@@ -175,25 +177,32 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         self._params.fan_speed = fan_speed
         self.async_write_ha_state()
 
-    async def async_send_command(self, command_name: str, command_params: Optional[Dict[str, Any]] = None, **kwargs: Any):
+    async def async_send_command(
+        self,
+        command: str,
+        params: Optional[Dict[str, Any]] = None,
+        **kwargs: Any
+    ) -> None:
         """Send a custom command to the robot. Currently only used to clean specific zones."""
-        cmd = command.create_command(command_name)
+        #cmd = vacuum_command.create_command(command, self.hass, self._robot, self._params)
 
-        if cmd is None:
-            _LOGGER.error("Command \"%s\" not implemented.", command_name)
-            return
+  #      if cmd is None:
+ #          _LOGGER.error("Command \"%s\" not implemented.", command_name)
+ #           return
 
-        try:
-            cmd.valid_or_throw(command_params)
-
-            await cmd.execute(command_params)
-        except exception.CommandParamException as ex:
-            _LOGGER.error(
-                "need parameter \"%s\" of type \"%s\" for command \"%s\".",
-                ex.name,
-                ex.type,
-                cmd.name
-            )
+        #try:
+        #    cmd.valid_or_throw(command_params)
+#
+ #           await cmd.execute(command_params)
+ #       except exception.CommandParamException as ex:
+ #           _LOGGER.error(
+ #               "Need parameter \"%s\" of type \"%s\" for command \"%s\".",
+  #              ex.name,
+  #              ex.type,
+  #              cmd.name
+  #          )
+  #      except exception.CommandException as ex:
+  #          _LOGGER.error("Could not execute command due to: %s", ex.msg)
 
     def _handle_coordinator_update(self):
         """
@@ -209,6 +218,8 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         self._params.available = params.available
         self._params.firmware = params.firmware
         self._params.dustbin = params.dustbin
+        self._params.last_cleaning_session = params.last_cleaning_session
+        self._params.maps = params.maps
 
         self.async_write_ha_state()
 

@@ -79,12 +79,9 @@ class Dustbin(Enum):
     DISCONNECTED = 3
     FULL = 4
 
-class ParamsIdName(TypedDict):
+class ParamsZone(TypedDict):
     id: str
     name: str
-
-class ParamsZone(ParamsIdName):
-    id: str
 
 def params_zone_create(zone) -> ParamsZone:
     return {
@@ -92,7 +89,9 @@ def params_zone_create(zone) -> ParamsZone:
         "name": zone.name
     }
 
-class ParamsMap(ParamsIdName):
+class ParamsMap(TypedDict):
+    id: str
+    name: str
     zones: List[ParamsZone]
 
 def params_map_create(m) -> ParamsMap:
