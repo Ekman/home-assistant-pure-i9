@@ -54,8 +54,7 @@ class CommandCleanZones(CommandBase):
 
 def create_command(hass, robot, params, command_name) -> CommandBase:
     """Creates a command object from a command name"""
-    match command_name:
-        case COMMAND_CLEAN_ZONES:
-            return CommandCleanZones(hass, robot, params)
-        case _:
-            return None
+    if command_name == COMMAND_CLEAN_ZONES:
+        return CommandCleanZones(hass, robot, params)
+
+    return None
