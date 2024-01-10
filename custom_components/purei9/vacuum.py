@@ -184,25 +184,25 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         **kwargs: Any
     ) -> None:
         """Send a custom command to the robot. Currently only used to clean specific zones."""
-        #cmd = vacuum_command.create_command(command, self.hass, self._robot, self._params)
+        cmd = vacuum_command.create_command(command, self.hass, self._robot, self._params)
 
-  #      if cmd is None:
- #          _LOGGER.error("Command \"%s\" not implemented.", command_name)
- #           return
+        if cmd is None:
+           _LOGGER.error("Command \"%s\" not implemented.", command_name)
+            return
 
-        #try:
-        #    cmd.valid_or_throw(command_params)
-#
- #           await cmd.execute(command_params)
- #       except exception.CommandParamException as ex:
- #           _LOGGER.error(
- #               "Need parameter \"%s\" of type \"%s\" for command \"%s\".",
-  #              ex.param_name,
-  #              ex.param_type,
-  #              cmd.name
-  #          )
-  #      except exception.CommandException as ex:
-  #          _LOGGER.error("Could not execute command due to: %s", ex.msg)
+        try:
+            cmd.valid_or_throw(command_params)
+
+            await cmd.execute(command_params)
+        except exception.CommandParamException as ex:
+            _LOGGER.error(
+                "Need parameter \"%s\" of type \"%s\" for command \"%s\".",
+                ex.param_name,
+                ex.param_type,
+                cmd.name
+            )
+        except exception.CommandException as ex:
+            _LOGGER.error("Could not execute command due to: %s", ex.msg)
 
     def _handle_coordinator_update(self):
         """
