@@ -1,3 +1,4 @@
+"""Vacuum commands"""
 from typing import Protocol, Dict, Any
 from asyncio import Future
 from . import exception, utility
@@ -5,6 +6,10 @@ from . import exception, utility
 COMMAND_CLEAN_ZONES = "clean_zones"
 
 class CommandBase(Protocol):
+    hass
+    robot
+    params
+
     """Base class for all vacuum commands"""
     def __init(self, hass, robot, params):
         self.hass = hass
