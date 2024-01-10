@@ -188,7 +188,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
 
         if cmd is None:
            _LOGGER.error("Command \"%s\" not implemented.", command_name)
-            return
+           return
 
         try:
             cmd.valid_or_throw(command_params)
