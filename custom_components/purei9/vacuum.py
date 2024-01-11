@@ -1,5 +1,5 @@
 """Home Assistant vacuum entity"""
-from typing import List, Optional, Any, Mapping
+from typing import List, Optional, Any, Mapping, Dict
 from datetime import timedelta
 import logging
 import voluptuous as vol
@@ -12,6 +12,7 @@ from homeassistant.components.vacuum import (
     SUPPORT_STATE,
     SUPPORT_STOP,
     SUPPORT_FAN_SPEED,
+    SUPPORT_SEND_COMMAND,
     StateVacuumEntity,
     PLATFORM_SCHEMA,
     STATE_CLEANING,
@@ -22,7 +23,7 @@ from homeassistant.components.vacuum import (
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloudv3 import CloudClient, CloudRobot
-from . import purei9, const
+from . import purei9, const, vacuum_command, exception
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -64,6 +65,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
             | SUPPORT_PAUSE
             | SUPPORT_STATE
             | SUPPORT_FAN_SPEED
+            | SUPPORT_SEND_COMMAND
         )
 
     @property
@@ -121,7 +123,14 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any]:
-        return { "dustbin": self._params.dustbin.name}
+        """Get extra state attributes"""
+        return {
+            "dustbin": self._params.dustbin.name,
+            "maps": ", ".join([_map["name"] for _map in self._params.maps]),
+            "zones": ", ".join(
+                [zone["name"] for _map in self._params.maps for zone in _map["zones"]]
+            )
+        }
 
     async def async_start(self):
         """Start cleaning"""
@@ -170,6 +179,33 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         self._params.fan_speed = fan_speed
         self.async_write_ha_state()
 
+    async def async_send_command(
+        self,
+        command: str,
+        params: Optional[Dict[str, Any]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Send a custom command to the robot. Currently only used to clean specific zones."""
+        cmd = vacuum_command.create_command(command, self.hass, self._robot, self._params)
+
+        if cmd is None:
+            _LOGGER.error("Command \"%s\" not implemented.", command)
+            return
+
+        try:
+            cmd.input_valid_or_throw(params)
+
+            await cmd.execute(params)
+        except exception.CommandParamException as ex:
+            _LOGGER.error(
+                "Need parameter \"%s\" of type \"%s\" for command \"%s\".",
+                ex.param_name,
+                ex.param_type,
+                command
+            )
+        except exception.CommandException as ex:
+            _LOGGER.error("Could not execute command \"%s\" due to: %s", command, ex)
+
     def _handle_coordinator_update(self):
         """
         Called by Home Assistant asking the vacuum to update to the latest state.
@@ -184,6 +220,8 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         self._params.available = params.available
         self._params.firmware = params.firmware
         self._params.dustbin = params.dustbin
+        self._params.last_cleaning_session = params.last_cleaning_session
+        self._params.maps = params.maps
 
         self.async_write_ha_state()
 
