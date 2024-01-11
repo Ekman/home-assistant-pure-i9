@@ -42,6 +42,11 @@ class PureI9Sensor(CoordinatorEntity, SensorEntity):
         super().__init__(coordinator)
         self._params = params
 
+    @property
+    def device_info(self):
+        """Return information for the device registry"""
+        return purei9.create_device_attrs(self._params)
+
     def _handle_coordinator_update(self):
         """
         Called by Home Assistant asking the vacuum to update to the latest state.
@@ -49,11 +54,6 @@ class PureI9Sensor(CoordinatorEntity, SensorEntity):
         """
         self._params = self.coordinator.data
         self.async_write_ha_state()
-
-    @property
-    def device_info(self):
-        """Return information for the device registry"""
-        return purei9.create_device_attrs(self._params)
 
 class PureI9LastCleaningStart(PureI9Sensor):
     """The main Pure i9 last cleaning start sensor entity"""
