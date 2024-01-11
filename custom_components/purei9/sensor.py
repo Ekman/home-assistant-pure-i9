@@ -50,6 +50,11 @@ class PureI9Sensor(CoordinatorEntity, SensorEntity):
         self._params = self.coordinator.data
         self.async_write_ha_state()
 
+    @property
+    def device_info(self):
+        """Return information for the device registry"""
+        return purei9.create_device_attrs(self._params)
+
 class PureI9LastCleaningStart(PureI9Sensor):
     """The main Pure i9 last cleaning start sensor entity"""
     @property
@@ -76,11 +81,6 @@ class PureI9LastCleaningStart(PureI9Sensor):
             else None
         )
 
-    @property
-    def device_info(self):
-        """Return information for the device registry"""
-        return purei9.create_device_attrs(self._params)
-
 class PureI9LastCleaningStop(PureI9Sensor):
     """The main Pure i9 last cleaning stop sensor entity"""
     @property
@@ -105,11 +105,6 @@ class PureI9LastCleaningStop(PureI9Sensor):
             if self._params.last_cleaning_session is not None
             else None
         )
-
-    @property
-    def device_info(self):
-        """Return information for the device registry"""
-        return purei9.create_device_attrs(self._params)
 
 class PureI9LastCleaningDuration(PureI9Sensor):
     """The main Pure i9 last cleaning duration sensor entity"""
@@ -140,11 +135,6 @@ class PureI9LastCleaningDuration(PureI9Sensor):
             else None
         )
 
-    @property
-    def device_info(self):
-        """Return information for the device registry"""
-        return purei9.create_device_attrs(self._params)
-
 class PureI9Dustbin(PureI9Sensor):
     """The main Pure i9 dustin status"""
     @property
@@ -171,8 +161,3 @@ class PureI9Dustbin(PureI9Sensor):
     def native_value(self):
         """The current value of the dustbin"""
         return self._params.dustbin.name
-
-    @property
-    def device_info(self):
-        """Return information for the device registry"""
-        return purei9.create_device_attrs(self._params)
