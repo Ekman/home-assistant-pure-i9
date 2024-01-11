@@ -164,10 +164,12 @@ class PureI9Dustbin(PureI9Sensor):
 
     @property
     def options(self):
+        """Available options for the enum"""
         return list(status.name for status in purei9.Dustbin)
 
     @property
     def native_value(self):
+        """The current value of the dustbin"""
         return self._params.dustbin.name
 
     @property
