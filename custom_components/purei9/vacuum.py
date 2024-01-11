@@ -204,7 +204,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
                 command
             )
         except exception.CommandException as ex:
-            _LOGGER.error("Could not execute command due to: %s", ex)
+            _LOGGER.error("Could not execute command \"%s\" due to: %s", command, ex)
 
     def _handle_coordinator_update(self):
         """

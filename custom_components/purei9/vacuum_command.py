@@ -41,7 +41,7 @@ class CommandCleanZones(CommandBase):
         )
 
         if _map is None:
-            raise exception.CommandException(f"Map \"{map_name}\" does not exist.")
+            raise exception.CommandException(f"Map \"{map_name}\" does not exist for robot \"{self.params.name}\".")
 
         # Search all zones inside this map for the ones we are looking for
         zone_ids = [zone["id"] for zone in _map["zones"] if zone["name"] in params["zones"]]
