@@ -1,5 +1,5 @@
 """Pure i9 business logic"""
-from typing import List
+from typing import List, TypedDict
 from enum import Enum
 from purei9_unofficial.common import (
     BatteryStatus,
@@ -8,6 +8,7 @@ from purei9_unofficial.common import (
     DustbinStates,
     CleaningSession,
 )
+from purei9_unofficial.cloudv3 import CloudZone, CloudMap
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
     STATE_DOCKED,
@@ -79,6 +80,32 @@ class Dustbin(Enum):
     DISCONNECTED = 3
     FULL = 4
 
+class ParamsZone(TypedDict):
+    """Type for a map zone"""
+    id: str
+    name: str
+
+def params_zone_create(cloud_zone: CloudZone) -> ParamsZone:
+    """Create a map zone from a CloudZone"""
+    return {
+        "id": cloud_zone.id,
+        "name": cloud_zone.name
+    }
+
+class ParamsMap(TypedDict):
+    """Type for a map"""
+    id: str
+    name: str
+    zones: List[ParamsZone]
+
+def params_map_create(cloud_map: CloudMap) -> ParamsMap:
+    """Create a map zone from a CloudRobot"""
+    return {
+        "id": cloud_map.id,
+        "name": cloud_map.name,
+        "zones": list(map(params_zone_create, cloud_map.zones))
+    }
+
 # pylint: disable=too-many-instance-attributes
 class Params:
     """Data available in the state"""
@@ -89,6 +116,7 @@ class Params:
     fan_speed: str = POWER_MODE_POWER
     dustbin: Dustbin = Dustbin.CONNECTED
     last_cleaning_session: CleaningSession = None
+    maps: List[ParamsMap] = []
 
     def __init__(self, unique_id: str, name: str, fan_speed_list: List[str]):
         self._unique_id = unique_id
