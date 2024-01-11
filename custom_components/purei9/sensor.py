@@ -28,8 +28,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     async_add_entities(entities)
 
-class PureI9LastCleaningStart(CoordinatorEntity, SensorEntity):
-    """The main Pure i9 last cleaning start sensor entity"""
+class PureI9Sensor(CoordinatorEntity, SensorEntity):
+    """Base class for Pure i9 sensor"""
     def __init__(
             self,
             coordinator,
@@ -38,6 +38,16 @@ class PureI9LastCleaningStart(CoordinatorEntity, SensorEntity):
         super().__init__(coordinator)
         self._params = params
 
+    def _handle_coordinator_update(self):
+        """
+        Called by Home Assistant asking the vacuum to update to the latest state.
+        Can contain IO code.
+        """
+        self._params = self.coordinator.data
+        self.async_write_ha_state()
+
+class PureI9LastCleaningStart(PureI9Sensor):
+    """The main Pure i9 last cleaning start sensor entity"""
     @property
     def unique_id(self) -> str:
         """Unique identifier to the entity"""
@@ -67,24 +77,8 @@ class PureI9LastCleaningStart(CoordinatorEntity, SensorEntity):
         """Return information for the device registry"""
         return purei9.create_device_attrs(self._params)
 
-    def _handle_coordinator_update(self):
-        """
-        Called by Home Assistant asking the vacuum to update to the latest state.
-        Can contain IO code.
-        """
-        self._params = self.coordinator.data
-        self.async_write_ha_state()
-
-class PureI9LastCleaningStop(CoordinatorEntity, SensorEntity):
+class PureI9LastCleaningStop(PureI9Sensor):
     """The main Pure i9 last cleaning stop sensor entity"""
-    def __init__(
-            self,
-            coordinator,
-            params: purei9.Params,
-        ):
-        super().__init__(coordinator)
-        self._params = params
-
     @property
     def unique_id(self) -> str:
         """Unique identifier to the entity"""
@@ -113,24 +107,8 @@ class PureI9LastCleaningStop(CoordinatorEntity, SensorEntity):
         """Return information for the device registry"""
         return purei9.create_device_attrs(self._params)
 
-    def _handle_coordinator_update(self):
-        """
-        Called by Home Assistant asking the vacuum to update to the latest state.
-        Can contain IO code.
-        """
-        self._params = self.coordinator.data
-        self.async_write_ha_state()
-
-class PureI9LastCleaningDuration(CoordinatorEntity, SensorEntity):
+class PureI9LastCleaningDuration(PureI9Sensor):
     """The main Pure i9 last cleaning duration sensor entity"""
-    def __init__(
-            self,
-            coordinator,
-            params: purei9.Params,
-        ):
-        super().__init__(coordinator)
-        self._params = params
-
     @property
     def unique_id(self) -> str:
         """Unique identifier to the entity"""
@@ -163,10 +141,37 @@ class PureI9LastCleaningDuration(CoordinatorEntity, SensorEntity):
         """Return information for the device registry"""
         return purei9.create_device_attrs(self._params)
 
-    def _handle_coordinator_update(self):
-        """
-        Called by Home Assistant asking the vacuum to update to the latest state.
-        Can contain IO code.
-        """
-        self._params = self.coordinator.data
-        self.async_write_ha_state()
+class PureI9Dustbin(PureI9Sensor):
+    """The main Pure i9 dustin status"""
+    @property
+    def unique_id(self) -> str:
+        """Unique identifier to the entity"""
+        return f"{self._params.unique_id}_dustbin"
+
+    @property
+    def name(self):
+        """The sensor name"""
+        return f"{self._params.name} dustbin"
+
+    @property
+    def device_class(self):
+        """The device class of the entity"""
+        return "enum"
+
+    @property
+    def options(self):
+        return [
+            purei9.Dustbin.UNKNOWN.name,
+            purei9.Dustbin.CONNECTED.name,
+            purei9.Dustbin.DISCONNECTED.name,
+            purei9.Dustbin.FULL.name
+        ]
+
+    @property
+    def native_value(self):
+        return self._params.dustbin.name
+
+    @property
+    def device_info(self):
+        """Return information for the device registry"""
+        return purei9.create_device_attrs(self._params)
