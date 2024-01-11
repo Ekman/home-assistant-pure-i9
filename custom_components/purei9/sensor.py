@@ -160,12 +160,7 @@ class PureI9Dustbin(PureI9Sensor):
 
     @property
     def options(self):
-        return [
-            purei9.Dustbin.UNKNOWN.name,
-            purei9.Dustbin.CONNECTED.name,
-            purei9.Dustbin.DISCONNECTED.name,
-            purei9.Dustbin.FULL.name
-        ]
+        return list(status.name for state in purei9.Dustbin)
 
     @property
     def native_value(self):
