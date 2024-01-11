@@ -1,10 +1,10 @@
 """Vacuum commands"""
-from typing import Protocol, Dict, Any
+from typing import Dict, Any
 from . import exception, utility
 
 COMMAND_CLEAN_ZONES = "clean_zones"
 
-class CommandBase(Protocol):
+class CommandBase:
     """Base class for all vacuum commands"""
     def __init__(self, hass, robot, params):
         super().__init__()
@@ -44,15 +44,15 @@ class CommandCleanZones(CommandBase):
             raise exception.CommandException(f"Map \"{map_name}\" does not exist.")
 
         # Search all zones inside this map for the ones we are looking for
-        zone_ids = [zone.id for zone in _map["zones"] if zone["name"] in params["zones"]]
+        zone_ids = [zone["id"] for zone in _map["zones"] if zone["name"] in params["zones"]]
 
         if len(zone_ids) == 0:
             raise exception.CommandException(f"Could not find any zones in map \"{map_name}\".")
 
         # Everything done, now send the robot to clean those maps and zones we found
-        await self.hass.async_add_executor_job(self.robot.cleanZones, _map.id, zone_ids)
+        await self.hass.async_add_executor_job(self.robot.cleanZones, _map["id"], zone_ids)
 
-def create_command(hass, robot, params, command_name) -> CommandBase:
+def create_command(command_name, hass, robot, params) -> CommandBase:
     """Creates a command object from a command name"""
     if command_name == COMMAND_CLEAN_ZONES:
         return CommandCleanZones(hass, robot, params)
