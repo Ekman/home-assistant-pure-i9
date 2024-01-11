@@ -26,6 +26,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             PureI9LastCleaningDuration(coord, coord.data)
         )
 
+        entities.append(
+            PureI9Dustbin(coord, coord.data)
+        )
+
     async_add_entities(entities)
 
 class PureI9Sensor(CoordinatorEntity, SensorEntity):
@@ -160,7 +164,7 @@ class PureI9Dustbin(PureI9Sensor):
 
     @property
     def options(self):
-        return list(status.name for state in purei9.Dustbin)
+        return list(status.name for status in purei9.Dustbin)
 
     @property
     def native_value(self):
