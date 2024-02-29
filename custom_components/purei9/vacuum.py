@@ -127,10 +127,16 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         return {
             "dustbin": self._params.dustbin.name,
             "maps": ", ".join(
-                filter(lambda x: x is not None, [_map["name"] for _map in self._params.maps])
+                filter(
+                    lambda x: x is not None,
+                    [_map["name"] for _map in self._params.maps]
+                )
             ),
             "zones": ", ".join(
-                filter(lambda x: x is not None, [zone["name"] for _map in self._params.maps for zone in _map["zones"]])
+                filter(
+                    lambda x: x is not None,
+                    [zone["name"] for _map in self._params.maps for zone in _map["zones"]]
+                )
             )
         }
 
