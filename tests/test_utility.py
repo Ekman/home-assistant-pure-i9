@@ -14,7 +14,7 @@ class TestPureI9(unittest.TestCase):
         for array, separator, expected in self.data_array_join:
             with self.subTest():
                 self.assertEqual(expected,
-                    utility.array_join(array_separator))
+                    utility.array_join(array, separator))
 
 if __name__ == '__main__':
     unittest.main()
