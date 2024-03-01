@@ -10,5 +10,8 @@ def first_or_default(collection, predicate, default = None):
 def array_join(array, separator = ", "):
     """Join an array of strings with a separator"""
     return separator.join(
-        filter(lambda x: x is not None, array)
+        filter(
+            lambda x: x is not None and len(x) > 0,
+            [str(item) for item in array]
+        )
     )

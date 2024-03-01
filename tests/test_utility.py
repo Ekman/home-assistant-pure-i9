@@ -7,6 +7,7 @@ class TestPureI9(unittest.TestCase):
     data_array_join = [
         ([1, 2, 3], "-", "1-2-3"),
         (["a", None, "b", 4], "_", "a_b_4"),
+        (["x", "", "y", "", "", "z"], "--", "x--y--z"),
     ]
 
     def test_array_join(self):
