@@ -126,4 +126,6 @@ class TestPureI9(unittest.TestCase):
                 self.assertEqual(expected, purei9.dustbin_to_hass(dustbin))
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output="test-results")
+    )

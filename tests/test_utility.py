@@ -1,5 +1,6 @@
 """Test the utility module"""
 import unittest
+import xmlrunner
 from custom_components.purei9 import utility
 
 class TestUtility(unittest.TestCase):
@@ -31,4 +32,6 @@ class TestUtility(unittest.TestCase):
                     utility.array_join(array, separator))
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output="test-results")
+    )
