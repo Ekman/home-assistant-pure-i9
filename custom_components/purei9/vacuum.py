@@ -23,7 +23,7 @@ from homeassistant.components.vacuum import (
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
 from purei9_unofficial.cloudv3 import CloudClient, CloudRobot
-from . import purei9, const, vacuum_command, exception
+from . import purei9, const, vacuum_command, exception, utility
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -126,17 +126,11 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         """Get extra state attributes"""
         return {
             "dustbin": self._params.dustbin.name,
-            "maps": ", ".join(
-                filter(
-                    lambda x: x is not None,
-                    [_map["name"] for _map in self._params.maps]
-                )
+            "maps": utility.array_join(
+                [_map["name"] for _map in self._params.maps],
             ),
-            "zones": ", ".join(
-                filter(
-                    lambda x: x is not None,
-                    [zone["name"] for _map in self._params.maps for zone in _map["zones"]]
-                )
+            "zones": utility.array_join(
+                [zone["name"] for _map in self._params.maps for zone in _map["zones"]]
             )
         }
 
