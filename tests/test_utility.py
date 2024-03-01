@@ -33,5 +33,5 @@ class TestUtility(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main(
-        testRunner=xmlrunner.XMLTestRunner(output="test-results")
+        testRunner=xmlrunner.XMLTestRunner(output="results")
     )
