@@ -11,7 +11,7 @@ class TestUtility(unittest.TestCase):
 
     def test_first_or_default(self):
         """Test the first_or_default function"""
-        for collection, predicate, default, expected in self.data_array_join:
+        for collection, predicate, default, expected in self.data_first_or_default:
             with self.subTest():
                 self.assertEqual(expected,
                     utility.first_or_default(collection, predicate, default))
