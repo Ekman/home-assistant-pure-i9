@@ -1,5 +1,6 @@
 """Test the purei9 module"""
 import unittest
+import xmlrunner
 from purei9_unofficial.common import BatteryStatus, RobotStates, PowerMode, DustbinStates
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
