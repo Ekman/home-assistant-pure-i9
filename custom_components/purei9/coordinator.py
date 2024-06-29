@@ -62,7 +62,14 @@ class PureI9Coordinator(DataUpdateCoordinator):
         params.dustbin = purei9.dustbin_to_hass(purei9_dustbin)
 
         params.last_cleaning_session = self.get_last_cleaning_session()
-        _LOGGER.debug("Last cleaning session: %s", params.last_cleaning_session)
+        _LOGGER.debug("Has last cleaning session? %s", params.last_cleaning_session is not None)
+
+        params.maps = list(map(purei9.params_map_create, self._robot.getMaps()))
+        _LOGGER.debug(
+            "Downloaded \"%d\" maps for \"%s\".",
+            len(params.maps),
+            self._robot.getname()
+        )
 
         return params
 
