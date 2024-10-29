@@ -21,7 +21,7 @@ from homeassistant.components.vacuum import (
     STATE_IDLE
 )
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
+from homeassistant.const import CONF_PASSWORD, CONF_EMAIL, CONF_COUNTRY_CODE
 from purei9_unofficial.cloudv3 import CloudClient, CloudRobot
 from . import purei9, const, vacuum_command, exception, utility
 
@@ -29,7 +29,8 @@ _LOGGER = logging.getLogger(__name__)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): str,
-    vol.Required(CONF_PASSWORD): str
+    vol.Required(CONF_PASSWORD): str,
+    vol.Required(CONF_COUNTRY_CODE): str
 })
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
@@ -239,7 +240,7 @@ def setup_platform(_hass, config, add_entities, _discovery_info=None) -> None:
     _LOGGER.warning(
         "DEPRECATED: Setup the integration using integration UI instead of configuration.yml."
     )
-    client = CloudClient(config[CONF_EMAIL], config.get(CONF_PASSWORD))
+    client = CloudClient(config[CONF_EMAIL], config.get(CONF_PASSWORD), config.get(CONF_COUNTRY_CODE))
     entities = map(PureI9Legacy.create, client.getRobots())
     add_entities(entities, update_before_add=True)
 
