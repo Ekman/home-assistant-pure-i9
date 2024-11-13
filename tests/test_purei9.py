@@ -7,7 +7,7 @@ from homeassistant.components.vacuum import (
     STATE_IDLE,
     STATE_ERROR
 )
-from ..custom_components.purei9 import purei9
+from custom_components.purei9 import purei9
 
 class TestPureI9(unittest.TestCase):
     """Tests for the purei9 module"""

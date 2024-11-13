@@ -1,6 +1,6 @@
 """Test the utility module"""
 import unittest
-from ..custom_components.purei9 import utility
+from custom_components.purei9 import utility
 
 class TestUtility(unittest.TestCase):
     """Tests for the utility module"""
