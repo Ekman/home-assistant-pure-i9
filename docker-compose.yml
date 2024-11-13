@@ -10,3 +10,14 @@ services:
     environment:
       TZ: Europe/Stockholm
     ports: [ "8123:8123" ]
+  lint:
+    image: cimg/python:3.11
+    volumes: [ "./:/files:ro" ]
+    entrypoint: [ python3 ]
+    command:
+      - -m
+      - unittest
+      - discover
+      - --start-directory
+      - tests
+      - --verbose
