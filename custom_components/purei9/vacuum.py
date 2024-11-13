@@ -20,7 +20,7 @@ from homeassistant.components.vacuum import (
     STATE_IDLE
 )
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
+from homeassistant.const import CONF_PASSWORD, CONF_EMAIL, CONF_COUNTRY_CODE
 from purei9_unofficial.cloudv3 import CloudRobot
 from . import purei9, const, vacuum_command, exception, utility
 
@@ -28,7 +28,8 @@ _LOGGER = logging.getLogger(__name__)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): str,
-    vol.Required(CONF_PASSWORD): str
+    vol.Required(CONF_PASSWORD): str,
+    vol.Required(CONF_COUNTRY_CODE): str
 })
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
@@ -39,6 +40,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         [PureI9(coord, coord.robot, coord.data) for coord in data[const.COORDINATORS]]
     )
 
+# pylint: disable=R0904
 class PureI9(CoordinatorEntity, StateVacuumEntity):
     """The main Pure i9 vacuum entity"""
     def __init__(
@@ -149,17 +151,26 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
             self._params.state = STATE_CLEANING
             self.async_write_ha_state()
 
+    def start(self):
+        raise NotImplementedError
+
     async def async_return_to_base(self, **kwargs):
         """Return to the dock"""
         await self.hass.async_add_executor_job(self._robot.gohome)
         self._params.state = STATE_RETURNING
         self.async_write_ha_state()
 
+    def return_to_base(self, **kwargs):
+        raise NotImplementedError
+
     async def async_stop(self, **kwargs):
         """Stop cleaning"""
         await self.hass.async_add_executor_job(self._robot.stopclean)
         self._params.state = STATE_IDLE
         self.async_write_ha_state()
+
+    def stop(self, **kwargs):
+        raise NotImplementedError
 
     async def async_pause(self):
         """Pause cleaning"""
@@ -171,6 +182,9 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
             self._params.state = STATE_PAUSED
             self.async_write_ha_state()
 
+    def pause(self):
+        raise NotImplementedError
+
     async def async_set_fan_speed(self, fan_speed: str, **kwargs: Any):
         """Set the fan speed of the robot"""
         await self.hass.async_add_executor_job(
@@ -179,6 +193,9 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         )
         self._params.fan_speed = fan_speed
         self.async_write_ha_state()
+
+    def set_fan_speed(self, fan_speed, **kwargs):
+        raise NotImplementedError
 
     async def async_send_command(
         self,
@@ -207,6 +224,14 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         except exception.CommandException as ex:
             _LOGGER.error("Could not execute command \"%s\" due to: %s", command, ex)
 
+    def send_command(
+        self,
+        command: str,
+        params: dict[str, Any] | list[Any] | None = None,
+        **kwargs: Any,
+    ):
+        raise NotImplementedError
+
     def _handle_coordinator_update(self):
         """
         Called by Home Assistant asking the vacuum to update to the latest state.
@@ -225,3 +250,9 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         self._params.maps = params.maps
 
         self.async_write_ha_state()
+
+    def locate(self, **kwargs):
+        raise NotImplementedError
+
+    def clean_spot(self, **kwargs):
+        raise NotImplementedError
