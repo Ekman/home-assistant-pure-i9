@@ -1,6 +1,6 @@
 """Control your Electrolux Purei9 vacuum robot"""
 import asyncio
-from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
+from homeassistant.const import CONF_PASSWORD, CONF_EMAIL, CONF_COUNTRY_CODE
 from purei9_unofficial.cloudv3 import CloudClient
 from . import const, coordinator
 
@@ -10,8 +10,9 @@ async def async_setup_entry(hass, config_entry) -> bool:
     """Setup the integration after the config flow"""
     email = config_entry.data.get(CONF_EMAIL)
     password = config_entry.data.get(CONF_PASSWORD)
+    countrycode = config_entry.data.get(CONF_COUNTRY_CODE)
 
-    purei9_client = CloudClient(email, password)
+    purei9_client = CloudClient(email, password, countrycode=countrycode)
 
     robots = await hass.async_add_executor_job(purei9_client.getRobots)
     robots = list(robots)
