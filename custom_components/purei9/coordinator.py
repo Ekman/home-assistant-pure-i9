@@ -1,7 +1,7 @@
 """Coordinate data updates from Pure i9."""
 import logging
 from datetime import timedelta
-import async_timeout
+from asyncio import timeout
 from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     UpdateFailed,
@@ -31,7 +31,7 @@ class PureI9Coordinator(DataUpdateCoordinator):
     async def _async_update_data(self):
         """Fetch data from Pure i9."""
         try:
-            async with async_timeout.timeout(10):
+            async with timeout(10):
                 return await self.hass.async_add_executor_job(
                     self.update_and_create_params
                 )
