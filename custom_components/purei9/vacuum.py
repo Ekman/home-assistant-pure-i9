@@ -1,6 +1,5 @@
 """Home Assistant vacuum entity"""
 from typing import List, Optional, Any, Mapping, Dict
-from datetime import timedelta
 import logging
 import voluptuous as vol
 from homeassistant.helpers.entity import DeviceInfo
@@ -22,7 +21,7 @@ from homeassistant.components.vacuum import (
 )
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL
-from purei9_unofficial.cloudv3 import CloudClient, CloudRobot
+from purei9_unofficial.cloudv3 import CloudRobot
 from . import purei9, const, vacuum_command, exception, utility
 
 _LOGGER = logging.getLogger(__name__)
