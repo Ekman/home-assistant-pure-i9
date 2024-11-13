@@ -2,7 +2,7 @@ version: "3"
 services:
   # localhost:8123
   hass:
-    image: homeassistant/home-assistant:2024.1.1
+    image: homeassistant/home-assistant:2024.1.0
     restart: unless-stopped
     volumes:
       - ./hass:/config
