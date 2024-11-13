@@ -2,7 +2,7 @@ version: "3"
 services:
   # localhost:8123
   hass:
-    image: homeassistant/home-assistant:stable
+    image: homeassistant/home-assistant:2024.1.0
     restart: unless-stopped
     volumes:
       - ./hass:/config
@@ -10,3 +10,23 @@ services:
     environment:
       TZ: Europe/Stockholm
     ports: [ "8123:8123" ]
+  lint:
+    image: cimg/python:3.11
+    volumes: [ "./:/files:ro" ]
+    working_dir: /files
+    entrypoint: [ pylint ]
+    command:
+      - custom_components/purei9
+      - tests
+  test:
+    image: cimg/python:3.11
+    volumes: [ "./:/files:ro" ]
+    working_dir: /files
+    entrypoint: [ python3 ]
+    command:
+      - -m
+      - unittest
+      - discover
+      - --start-directory
+      - tests
+      - --verbose
