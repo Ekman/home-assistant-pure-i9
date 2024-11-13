@@ -13,6 +13,15 @@ services:
   lint:
     image: cimg/python:3.11
     volumes: [ "./:/files:ro" ]
+    working_dir: /files
+    entrypoint: [ pylint ]
+    command:
+      - custom_components/purei9
+      - tests
+  test:
+    image: cimg/python:3.11
+    volumes: [ "./:/files:ro" ]
+    working_dir: /files
     entrypoint: [ python3 ]
     command:
       - -m
