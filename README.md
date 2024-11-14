@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/Ekman/home-assistant-pure-i9/tree/master.svg?style=shield)](https://circleci.com/gh/Ekman/home-assistant-pure-i9/tree/master)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
-[![GitHub Sponsors](https://img.shields.io/github/sponsors/Ekman?style=for-the-badge&logoSize=94)](https://github.com/sponsors/Ekman)
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/Ekman)](https://github.com/sponsors/Ekman)
 
 Integrate your [Electrolux Pure i9 robot vacuum](https://www.electrolux.se/wellbeing/discover/robot-vacuum-cleaner-purei9/) with the smart home platform [Home Assistant](https://www.home-assistant.io/). The integration communicates with your Pure i9 using the cloud.
 
