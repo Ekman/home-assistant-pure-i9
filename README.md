@@ -1,6 +1,6 @@
 # Home Assistant Pure i9
 
-[![CircleCI](https://circleci.com/gh/Ekman/home-assistant-pure-i9/tree/master.svg?style=svg)](https://circleci.com/gh/Ekman/home-assistant-pure-i9/tree/master)
+[![CircleCI](https://circleci.com/gh/Ekman/home-assistant-pure-i9/tree/master.svg?style=shield)](https://circleci.com/gh/Ekman/home-assistant-pure-i9/tree/master)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/Ekman?style=for-the-badge&logoSize=94)](https://github.com/sponsors/Ekman)
 
