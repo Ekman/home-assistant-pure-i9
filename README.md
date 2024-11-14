@@ -45,5 +45,3 @@ This project complies with [Semantic Versioning](https://semver.org/).
 ## Changelog
 
 For a complete list of changes, and how to migrate between major versions, see [releases page](https://github.com/Ekman/home-assistant-pure-i9/releases).
-
-## Buy me a coffee
