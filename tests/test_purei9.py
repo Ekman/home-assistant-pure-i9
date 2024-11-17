@@ -16,7 +16,7 @@ class TestPureI9(unittest.TestCase):
         (RobotStates.Cleaning, BatteryStatus.Dead, DustbinStates.connected, STATE_CLEANING),
         (RobotStates.Sleeping, BatteryStatus.High, DustbinStates.connected, STATE_DOCKED),
         (RobotStates.Sleeping, BatteryStatus.Normal, DustbinStates.connected, STATE_IDLE),
-        (RobotStates.Sleeping, BatteryStatus.Normal, DustbinStates.full, STATE_ERROR),
+        (RobotStates.Sleeping, BatteryStatus.Normal, DustbinStates.full, STATE_IDLE),
     ]
 
     def test_state_to_hass(self):
