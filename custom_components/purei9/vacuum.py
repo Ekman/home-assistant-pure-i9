@@ -119,7 +119,6 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
     def extra_state_attributes(self) -> Mapping[str, Any]:
         """Get extra state attributes"""
         return {
-            "dustbin": self._params.dustbin.name,
             "maps": utility.array_join(
                 [_map["name"] for _map in self._params.maps],
             ),
