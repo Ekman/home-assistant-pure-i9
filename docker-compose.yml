@@ -1,4 +1,6 @@
 version: "3"
+volumes:
+  pip:
 services:
   # localhost:8123
   hass:
@@ -12,15 +14,33 @@ services:
     ports: [ "8123:8123" ]
   lint:
     image: cimg/python:3.11
-    volumes: [ "./:/files:ro" ]
+    volumes:
+      - "./:/files:ro"
+      - pip:/tmp/pip:ro
     working_dir: /files
     entrypoint: [ pylint ]
     command:
       - custom_components/purei9
       - tests
+  pip_install:
+    image: cimg/python:3.11
+    volumes:
+      - "./requirements.txt:/requirements.txt:ro"
+      - pip:/home/circleci/pip
+    entrypoint: [ pip3 ]
+    command:
+      - install
+      - --target
+      - ~/pip
+      - --no-cache-dir
+      - --requirement
+      - /requirements.txt
+      - --upgrade
   test:
     image: cimg/python:3.11
-    volumes: [ "./:/files:ro" ]
+    volumes:
+      - "./:/files:ro"
+      - pip:/tmp/pip:ro
     working_dir: /files
     entrypoint: [ python3 ]
     command:
