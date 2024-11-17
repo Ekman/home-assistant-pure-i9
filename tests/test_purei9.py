@@ -13,18 +13,17 @@ class TestPureI9(unittest.TestCase):
     """Tests for the purei9 module"""
     data_state_to_hass = [
         # No need to test every single case. The test will become too fragile.
-        (RobotStates.Cleaning, BatteryStatus.Dead, DustbinStates.connected, STATE_CLEANING),
-        (RobotStates.Sleeping, BatteryStatus.High, DustbinStates.connected, STATE_DOCKED),
-        (RobotStates.Sleeping, BatteryStatus.Normal, DustbinStates.connected, STATE_IDLE),
-        (RobotStates.Sleeping, BatteryStatus.Normal, DustbinStates.full, STATE_IDLE),
+        (RobotStates.Cleaning, BatteryStatus.Dead, STATE_CLEANING),
+        (RobotStates.Sleeping, BatteryStatus.High, STATE_DOCKED),
+        (RobotStates.Sleeping, BatteryStatus.Normal, STATE_IDLE),
     ]
 
     def test_state_to_hass(self):
         """Test the state_to_hass function"""
-        for purei9_state, purei9_battery, purei9_dustbin, expected in self.data_state_to_hass:
+        for purei9_state, purei9_battery, expected in self.data_state_to_hass:
             with self.subTest():
                 self.assertEqual(expected,
-                    purei9.state_to_hass(purei9_state, purei9_battery, purei9_dustbin))
+                    purei9.state_to_hass(purei9_state, purei9_battery))
 
     data_battery_to_hass = [
         (BatteryStatus.Dead, 0),
