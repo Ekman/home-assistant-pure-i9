@@ -4,20 +4,13 @@ import logging
 import voluptuous as vol
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.components.vacuum import (
-    SUPPORT_BATTERY,
-    SUPPORT_PAUSE,
-    SUPPORT_RETURN_HOME,
-    SUPPORT_START,
-    SUPPORT_STATE,
-    SUPPORT_STOP,
-    SUPPORT_FAN_SPEED,
-    SUPPORT_SEND_COMMAND,
     StateVacuumEntity,
     PLATFORM_SCHEMA,
     STATE_CLEANING,
     STATE_PAUSED,
     STATE_RETURNING,
-    STATE_IDLE
+    STATE_IDLE,
+    VacuumEntityFeature
 )
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.const import CONF_PASSWORD, CONF_EMAIL, CONF_COUNTRY_CODE
@@ -59,14 +52,14 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         # Turn on, turn off and is on is not supported by vacuums anymore
         # See: https://github.com/home-assistant/core/issues/36503
         return (
-            SUPPORT_BATTERY
-            | SUPPORT_START
-            | SUPPORT_RETURN_HOME
-            | SUPPORT_STOP
-            | SUPPORT_PAUSE
-            | SUPPORT_STATE
-            | SUPPORT_FAN_SPEED
-            | SUPPORT_SEND_COMMAND
+            VacuumEntityFeature.BATTERY
+            | VacuumEntityFeature.START
+            | VacuumEntityFeature.RETURN_HOME
+            | VacuumEntityFeature.STOP
+            | VacuumEntityFeature.PAUSE
+            | VacuumEntityFeature.STATE
+            | VacuumEntityFeature.FAN_SPEED
+            | VacuumEntityFeature.SEND_COMMAND
         )
 
     @property
