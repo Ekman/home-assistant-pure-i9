@@ -4,14 +4,6 @@ import logging
 import voluptuous as vol
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.components.vacuum import (
-    SUPPORT_BATTERY,
-    SUPPORT_PAUSE,
-    SUPPORT_RETURN_HOME,
-    SUPPORT_START,
-    SUPPORT_STATE,
-    SUPPORT_STOP,
-    SUPPORT_FAN_SPEED,
-    SUPPORT_SEND_COMMAND,
     StateVacuumEntity,
     PLATFORM_SCHEMA,
     STATE_CLEANING,
