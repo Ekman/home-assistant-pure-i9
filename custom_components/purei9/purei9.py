@@ -39,16 +39,12 @@ PURE_I9_STATE_MAP = {
 
 def state_to_hass(
     pure_i9_state: str,
-    pure_i9_battery: str,
-    purei9_dustbin: DustbinStates=DustbinStates.connected
+    pure_i9_battery: str
     ) -> str:
     """Translate Pure i9 data into a Home Assistant state constant"""
     # The Pure i9 will become "Sleeping" when docked and charged 100% OR when stopped.
     # In order to detect if it's docket or if it's just idling in the middle of a room
     # check the battery level. If it's full then we're docked.
-    if purei9_dustbin in (DustbinStates.empty, DustbinStates.full):
-        return STATE_ERROR
-
     if pure_i9_state == RobotStates.Sleeping:
         return STATE_DOCKED if pure_i9_battery == BatteryStatus.High else STATE_IDLE
 

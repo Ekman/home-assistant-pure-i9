@@ -47,10 +47,9 @@ class PureI9Coordinator(DataUpdateCoordinator):
         params = purei9.Params(self._robot.getid(), self._robot.getname(), fan_speed_list)
 
         pure_i9_battery = self._robot.getbattery()
-        purei9_dustbin = self._robot.getdustbinstatus()
 
         params.state = purei9.state_to_hass(
-            self._robot.getstatus(), pure_i9_battery, purei9_dustbin)
+            self._robot.getstatus(), pure_i9_battery)
 
         params.fan_speed = purei9.fan_speed_to_hass(
             params.fan_speed_list, self._robot.getpowermode())
@@ -59,7 +58,7 @@ class PureI9Coordinator(DataUpdateCoordinator):
         params.battery = purei9.battery_to_hass(pure_i9_battery)
         params.available = self._robot.isconnected()
         params.firmware = self._robot.getfirmware()
-        params.dustbin = purei9.dustbin_to_hass(purei9_dustbin)
+        params.dustbin = purei9.dustbin_to_hass(self._robot.getdustbinstatus())
 
         params.last_cleaning_session = self.get_last_cleaning_session()
         _LOGGER.debug("Has last cleaning session? %s", params.last_cleaning_session is not None)
