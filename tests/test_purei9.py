@@ -4,8 +4,7 @@ from purei9_unofficial.common import BatteryStatus, RobotStates, PowerMode, Dust
 from homeassistant.components.vacuum import (
     STATE_CLEANING,
     STATE_DOCKED,
-    STATE_IDLE,
-    STATE_ERROR
+    STATE_IDLE
 )
 from custom_components.purei9 import purei9
 
