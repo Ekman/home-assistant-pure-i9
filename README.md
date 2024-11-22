@@ -34,7 +34,7 @@ Follow these steps to configure the integration:
 1. Navigate to `Settings -> Devices & Services -> Integrations`.
 2. Click `+ Add Integration`.
 3. Find **Electrolux Pure i9**.
-4. Enter your Electrolux e-mail and password.
+4. Enter your Electrolux e-mail, password and a [2-letter country code (ISO 3166-1 alpha-2)](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
 
 For more information on what the integration can do [read the manual](MANUAL.md).
 

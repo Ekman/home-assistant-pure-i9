@@ -29,7 +29,7 @@ For the older models the name of the fan speeds are:
 
 ## Dustbin
 
-You can read the dustbin status of the vacuum using the attribute `dustbin`. The values of the dustbin can be:
+You can read the dustbin status of the vacuum using the sensor `sensor.{{vacuum}}_dustbin`. The values of the dustbin can be:
 
 | Name | Description |
 | --- | --- |
