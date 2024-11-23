@@ -28,6 +28,8 @@ class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         password = user_input[CONF_PASSWORD]
         countrycode = user_input[CONF_COUNTRY_CODE]
 
+        _LOGGER.info("Config flow setup with country code \"%s\".", countrycode)
+
         purei9_client = CloudClient(email, password, countrycode=countrycode)
         return self.hass.async_add_executor_job(purei9_client.tryLogin)
 
@@ -43,7 +45,8 @@ class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     data=user_input
                 )
             # pylint: disable=broad-except
-            except Exception:
+            except Exception as ex:
+                _LOGGER.error("Could not step user due to: %s", ex)
                 errors["base"] = "auth"
 
         return self.show_form("user", errors)
@@ -65,7 +68,8 @@ class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     data_updates=user_input,
                 )
             # pylint: disable=broad-except
-            except Exception:
+            except Exception as ex:
+                _LOGGER.error("Could not step reconfigure due to: %s", ex)
                 errors["base"] = "auth"
 
         return self.show_form("reconfigure", errors)

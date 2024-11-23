@@ -12,6 +12,6 @@
         }
     },
     "error": {
-        "auth": "The e-mail or password that you've provided is incorrect."
+        "auth": "The e-mail, password or country code is incorrect."
     }
 }
