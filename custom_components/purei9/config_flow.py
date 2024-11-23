@@ -2,6 +2,7 @@
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD, CONF_COUNTRY_CODE
+from homeassistant.helpers.selector import CountrySelector
 from purei9_unofficial.cloudv3 import CloudClient
 from .const import DOMAIN
 
@@ -33,7 +34,7 @@ class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         schema = vol.Schema({
             vol.Required(CONF_EMAIL): str,
             vol.Required(CONF_PASSWORD): str,
-            vol.Required(CONF_COUNTRY_CODE): str,
+            vol.Required(CONF_COUNTRY_CODE): CountrySelector(),
         })
 
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
