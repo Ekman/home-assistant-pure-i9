@@ -47,6 +47,8 @@ class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             if await self.try_login(user_input):
+                email = user_input[CONF_EMAIL]
+
                 return self.async_create_entry(
                     title=email,
                     data=user_input
