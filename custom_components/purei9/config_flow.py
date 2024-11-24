@@ -9,11 +9,12 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class PureI9ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Configuration flow"""
     VERSION = 1
 
     def show_form(self, step_id, errors):
+        """Show the form"""
         schema = vol.Schema({
             vol.Required(CONF_EMAIL): str,
             vol.Required(CONF_PASSWORD): str,
@@ -53,8 +54,8 @@ class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     title=email,
                     data=user_input
                 )
-            else:
-                errors["base"] = "auth"
+
+            errors["base"] = "auth"
 
         return self.show_form("user", errors)
 
@@ -73,7 +74,7 @@ class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     self._get_reconfigure_entry(),
                     data_updates=user_input,
                 )
-            else:
-                errors["base"] = "auth"
+
+            errors["base"] = "auth"
 
         return self.show_form("reconfigure", errors)
