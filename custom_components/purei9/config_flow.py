@@ -37,11 +37,12 @@ class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             return True
         # pylint: disable=broad-except
-        except Exception ex:
+        except Exception as ex:
             _LOGGER.error("Could not step user due to: %s", ex)
             return False
 
     async def async_step_user(self, user_input=None):
+        """Show initial step"""
         errors = {}
 
         if user_input is not None:
@@ -56,6 +57,7 @@ class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.show_form("user", errors)
 
     async def async_step_reconfigure(self, user_input=None):
+        """Show reconfigure"""
         errors = {}
 
         if user_input is not None:
