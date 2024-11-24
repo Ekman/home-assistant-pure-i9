@@ -59,6 +59,8 @@ class PureI9Coordinator(DataUpdateCoordinator):
         params.last_cleaning_session = self.get_last_cleaning_session()
         _LOGGER.debug("Has last cleaning session? %s", params.last_cleaning_session is not None)
 
+        # Temporarily commented out until we can figure out:
+        # https://github.com/Phype/purei9_unofficial/issues/30
         #params.maps = list(map(purei9.params_map_create, self._robot.getMaps()))
         #_LOGGER.debug(
         #    "Downloaded \"%d\" maps for \"%s\".",
