@@ -2,10 +2,7 @@
 import logging
 from datetime import timedelta
 from asyncio import timeout
-from homeassistant.helpers.update_coordinator import (
-    DataUpdateCoordinator,
-    UpdateFailed,
-)
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from purei9_unofficial.cloudv2 import CloudRobot
 from . import purei9
 
