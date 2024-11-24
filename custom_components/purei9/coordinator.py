@@ -2,10 +2,7 @@
 import logging
 from datetime import timedelta
 from asyncio import timeout
-from homeassistant.helpers.update_coordinator import (
-    DataUpdateCoordinator,
-    UpdateFailed,
-)
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from purei9_unofficial.cloudv2 import CloudRobot
 from . import purei9
 
@@ -30,14 +27,10 @@ class PureI9Coordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self):
         """Fetch data from Pure i9."""
-        try:
-            async with timeout(10):
-                return await self.hass.async_add_executor_job(
-                    self.update_and_create_params
-                )
-        except Exception as ex:
-            _LOGGER.error("Could not update data for \"%s\" due to: %s", self.name, ex)
-            raise UpdateFailed from ex
+        async with timeout(10):
+            return await self.hass.async_add_executor_job(
+                self.update_and_create_params
+            )
 
     def update_and_create_params(self):
         """Update and create the latest version of params."""
@@ -63,19 +56,21 @@ class PureI9Coordinator(DataUpdateCoordinator):
         params.last_cleaning_session = self.get_last_cleaning_session()
         _LOGGER.debug("Has last cleaning session? %s", params.last_cleaning_session is not None)
 
-        params.maps = list(map(purei9.params_map_create, self._robot.getMaps()))
-        _LOGGER.debug(
-            "Downloaded \"%d\" maps for \"%s\".",
-            len(params.maps),
-            self._robot.getname()
-        )
+        # Temporarily commented out until we can figure out:
+        # https://github.com/Phype/purei9_unofficial/issues/30
+        #params.maps = list(map(purei9.params_map_create, self._robot.getMaps()))
+        #_LOGGER.debug(
+        #    "Downloaded \"%d\" maps for \"%s\".",
+        #    len(params.maps),
+        #    self._robot.getname()
+        #)
 
         return params
 
     def get_last_cleaning_session(self):
         """Get the latest cleaning session"""
         purei9_cleaning_sessions = self._robot.getCleaningSessions()
-        _LOGGER.info(
+        _LOGGER.debug(
             "Downloaded \"%d\" cleaning sessions for \"%s\".",
             len(purei9_cleaning_sessions),
             self._robot.getname()
