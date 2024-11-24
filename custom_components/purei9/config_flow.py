@@ -66,7 +66,7 @@ class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self.async_set_unique_id(email)
             self._abort_if_unique_id_mismatch()
 
-            if await self.try_login(user_input)
+            if await self.try_login(user_input):
                 return self.async_update_reload_and_abort(
                     self._get_reconfigure_entry(),
                     data_updates=user_input,
