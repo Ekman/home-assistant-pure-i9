@@ -80,8 +80,8 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         return self._params.battery
 
     @property
-    def state(self) -> str:
-        """Check Home Assistant state variables"""
+    def activity(self) -> VacuumActivity:
+        """Return the current vacuum activity"""
         return self._params.state
 
     @property

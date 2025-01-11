@@ -101,7 +101,7 @@ def params_map_create(cloud_map: CloudMap) -> ParamsMap:
 class Params:
     """Data available in the state"""
     battery: int = 100
-    state: str = VacuumActivity.IDLE
+    state: VacuumActivity = VacuumActivity.IDLE
     available: bool = True
     firmware: str = None
     fan_speed: str = POWER_MODE_POWER
