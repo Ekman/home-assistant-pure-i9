@@ -39,7 +39,8 @@ def state_to_hass(
     # In order to detect if it's docket or if it's just idling in the middle of a room
     # check the battery level. If it's full then we're docked.
     if pure_i9_state == RobotStates.Sleeping:
-        return VacuumActivity.DOCKED if pure_i9_battery == BatteryStatus.High else VacuumActivity.IDLE
+        return (VacuumActivity.DOCKED if pure_i9_battery == BatteryStatus.High
+                else VacuumActivity.IDLE)
 
     return PURE_I9_STATE_MAP.get(pure_i9_state, VacuumActivity.IDLE)
 
