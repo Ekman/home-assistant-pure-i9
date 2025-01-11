@@ -9,9 +9,7 @@ from purei9_unofficial.common import (
     CleaningSession,
 )
 from purei9_unofficial.cloudv3 import CloudZone, CloudMap
-from homeassistant.components.vacuum import (
-    VacuumActivity
-)
+from homeassistant.components.vacuum import VacuumActivity
 from . import const
 
 # See: https://github.com/Phype/purei9_unofficial/blob/master/src/purei9_unofficial/common.py
