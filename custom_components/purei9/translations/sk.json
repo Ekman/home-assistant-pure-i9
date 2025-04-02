@@ -1,0 +1,17 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Prihlasovacie údaje",
+                "data": {
+                    "email": "E-mail",
+                    "password": "Heslo",
+                    "country_code": "Krajina - kód"
+                }
+            }
+        }
+    },
+    "error": {
+        "auth": "E-mail alebo heslo, ktoré ste poskytli, je nesprávne."
+    }
+}
