@@ -1,5 +1,6 @@
 """Initial user configuration for the integration"""
 import logging
+from typing import Self
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD, CONF_COUNTRY_CODE
@@ -12,6 +13,11 @@ _LOGGER = logging.getLogger(__name__)
 class HiveOsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Configuration flow"""
     VERSION = 1
+
+    def is_matching(self, other_flow: Self) -> bool:
+        """Return True if other_flow is matching this flow."""
+        return self.VERSION == other_flow.VERSION
+
 
     async def async_step_user(self, user_input=None):
         errors = {}

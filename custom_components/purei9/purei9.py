@@ -10,31 +10,26 @@ from purei9_unofficial.common import (
 )
 from purei9_unofficial.cloudv3 import CloudZone, CloudMap
 from homeassistant.components.vacuum import (
-    STATE_CLEANING,
-    STATE_DOCKED,
-    STATE_ERROR,
-    STATE_IDLE,
-    STATE_PAUSED,
-    STATE_RETURNING
+    VacuumActivity
 )
 from . import const
 
 # See: https://github.com/Phype/purei9_unofficial/blob/master/src/purei9_unofficial/common.py
 PURE_I9_STATE_MAP = {
-    RobotStates.Cleaning: STATE_CLEANING,
-    RobotStates.Paused_Cleaning: STATE_PAUSED,
-    RobotStates.Spot_Cleaning: STATE_CLEANING,
-    RobotStates.Paused_Spot_Cleaning: STATE_PAUSED,
-    RobotStates.Return: STATE_RETURNING,
-    RobotStates.Paused_Return: STATE_PAUSED,
-    RobotStates.Return_for_Pitstop: STATE_RETURNING,
-    RobotStates.Paused_Return_for_Pitstop: STATE_PAUSED,
-    RobotStates.Charging: STATE_DOCKED,
+    RobotStates.Cleaning: VacuumActivity.CLEANING,
+    RobotStates.Paused_Cleaning: VacuumActivity.PAUSED,
+    RobotStates.Spot_Cleaning: VacuumActivity.CLEANING,
+    RobotStates.Paused_Spot_Cleaning: VacuumActivity.PAUSED,
+    RobotStates.Return: VacuumActivity.RETURNING,
+    RobotStates.Paused_Return: VacuumActivity.PAUSED,
+    RobotStates.Return_for_Pitstop: VacuumActivity.RETURNING,
+    RobotStates.Paused_Return_for_Pitstop: VacuumActivity.PAUSED,
+    RobotStates.Charging: VacuumActivity.DOCKED,
     # RobotStates.Sleeping: Special case, see function,
-    RobotStates.Error: STATE_ERROR,
-    RobotStates.Pitstop: STATE_DOCKED,
+    RobotStates.Error: VacuumActivity.ERROR,
+    RobotStates.Pitstop: VacuumActivity.DOCKED,
     # RobotStates.Manual_Steering: Manual steering?,
-    RobotStates.Firmware_Upgrade: STATE_DOCKED
+    RobotStates.Firmware_Upgrade: VacuumActivity.DOCKED
 }
 
 def state_to_hass(
@@ -46,9 +41,9 @@ def state_to_hass(
     # In order to detect if it's docket or if it's just idling in the middle of a room
     # check the battery level. If it's full then we're docked.
     if pure_i9_state == RobotStates.Sleeping:
-        return STATE_DOCKED if pure_i9_battery == BatteryStatus.High else STATE_IDLE
+        return VacuumActivity.DOCKED if pure_i9_battery == BatteryStatus.High else VacuumActivity.IDLE
 
-    return PURE_I9_STATE_MAP.get(pure_i9_state, STATE_IDLE)
+    return PURE_I9_STATE_MAP.get(pure_i9_state, VacuumActivity.IDLE)
 
 # See: https://github.com/Phype/purei9_unofficial/blob/master/src/purei9_unofficial/common.py
 PURE_I9_BATTERY_MAP = {
@@ -106,7 +101,7 @@ def params_map_create(cloud_map: CloudMap) -> ParamsMap:
 class Params:
     """Data available in the state"""
     battery: int = 100
-    state: str = STATE_IDLE
+    state: str = VacuumActivity.IDLE
     available: bool = True
     firmware: str = None
     fan_speed: str = POWER_MODE_POWER
