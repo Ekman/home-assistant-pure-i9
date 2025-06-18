@@ -1,20 +1,16 @@
 """Test the purei9 module"""
 import unittest
 from purei9_unofficial.common import BatteryStatus, RobotStates, PowerMode, DustbinStates
-from homeassistant.components.vacuum import (
-    STATE_CLEANING,
-    STATE_DOCKED,
-    STATE_IDLE
-)
+from homeassistant.components.vacuum import VacuumActivity
 from custom_components.purei9 import purei9
 
 class TestPureI9(unittest.TestCase):
     """Tests for the purei9 module"""
     data_state_to_hass = [
         # No need to test every single case. The test will become too fragile.
-        (RobotStates.Cleaning, BatteryStatus.Dead, STATE_CLEANING),
-        (RobotStates.Sleeping, BatteryStatus.High, STATE_DOCKED),
-        (RobotStates.Sleeping, BatteryStatus.Normal, STATE_IDLE),
+        (RobotStates.Cleaning, BatteryStatus.Dead, VacuumActivity.CLEANING),
+        (RobotStates.Sleeping, BatteryStatus.High, VacuumActivity.DOCKED),
+        (RobotStates.Sleeping, BatteryStatus.Normal, VacuumActivity.IDLE),
     ]
 
     def test_state_to_hass(self):

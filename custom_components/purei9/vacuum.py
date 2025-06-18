@@ -6,10 +6,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.components.vacuum import (
     StateVacuumEntity,
     PLATFORM_SCHEMA,
-    STATE_CLEANING,
-    STATE_PAUSED,
-    STATE_RETURNING,
-    STATE_IDLE,
+    VacuumActivity,
     VacuumEntityFeature
 )
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -83,8 +80,8 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         return self._params.battery
 
     @property
-    def state(self) -> str:
-        """Check Home Assistant state variables"""
+    def activity(self) -> VacuumActivity:
+        """Return the current vacuum activity"""
         return self._params.state
 
     @property
@@ -132,15 +129,15 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         # If you click on start after clicking return, it will continue
         # returning. So we'll need to call stop first, then start in order
         # to start a clean.
-        if self._params.state == STATE_RETURNING:
+        if self._params.state == VacuumActivity.RETURNING:
             await self.hass.async_add_executor_job(self._robot.stopclean)
 
         # According to Home Assistant, pause should be an idempotent action.
         # However, the Pure i9 will toggle pause on/off if called multiple
         # times. Circumvent that.
-        if self._params.state != STATE_CLEANING:
+        if self._params.state != VacuumActivity.CLEANING:
             await self.hass.async_add_executor_job(self._robot.startclean)
-            self._params.state = STATE_CLEANING
+            self._params.state = VacuumActivity.CLEANING
             self.async_write_ha_state()
 
     def start(self):
@@ -149,7 +146,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
     async def async_return_to_base(self, **kwargs):
         """Return to the dock"""
         await self.hass.async_add_executor_job(self._robot.gohome)
-        self._params.state = STATE_RETURNING
+        self._params.state = VacuumActivity.RETURNING
         self.async_write_ha_state()
 
     def return_to_base(self, **kwargs):
@@ -158,7 +155,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
     async def async_stop(self, **kwargs):
         """Stop cleaning"""
         await self.hass.async_add_executor_job(self._robot.stopclean)
-        self._params.state = STATE_IDLE
+        self._params.state = VacuumActivity.IDLE
         self.async_write_ha_state()
 
     def stop(self, **kwargs):
@@ -169,9 +166,9 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         # According to Home Assistant, pause should be an idempotent
         # action. However, the Pure i9 will toggle pause on/off if
         # called multiple times. Circumvent that.
-        if self._params.state != STATE_PAUSED:
+        if self._params.state != VacuumActivity.PAUSED:
             await self.hass.async_add_executor_job(self._robot.pauseclean)
-            self._params.state = STATE_PAUSED
+            self._params.state = VacuumActivity.PAUSED
             self.async_write_ha_state()
 
     def pause(self):

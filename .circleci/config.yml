@@ -18,7 +18,7 @@ commands:
 jobs:
   lint:
     docker:
-      - image: cimg/python:3.11
+      - image: cimg/python:3.13
     resource_class: small
     steps:
       - checkout
@@ -27,7 +27,7 @@ jobs:
       - run: find . -name "*.json" -type f -print0 | xargs -0I {} python3 -m json.tool {}
   test:
     docker:
-      - image: cimg/python:3.11
+      - image: cimg/python:3.13
     resource_class: small
     steps:
       - checkout
