@@ -123,28 +123,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
                 [zone["name"] for _map in self._params.maps for zone in _map["zones"]]
             )
         }
-#
-#     @property
-#     def activity(self) -> Optional[VacuumActivity]:
-#         """Return the current activity of the vacuum."""
-#         state_str = str(self._params.state).upper() if self._params.state else "IDLE"
-#         return VacuumActivity.__members__.get(state_str, VacuumActivity.IDLE)
-#    @property
-#    def activity(self) -> Optional[VacuumActivity]:
-#        """Return the current activity of the vacuum."""
-#        try:
-#            return VacuumActivity[self._params.state.upper()]
-#        except KeyError:
-#            _LOGGER.warning("Invalid state received: %s", self._params.state)
-#            return None
-            
-    @property
-    def activity(self) -> VacuumActivity:
-        """Return the current activity of the vacuum."""
-        return self._params.state
 
-#        return VacuumActivity[self._params.state.upper()]
-#  
     async def async_start(self):
         """Start cleaning"""
         # If you click on start after clicking return, it will continue
@@ -152,8 +131,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         # to start a clean.
         if self._params.state == VacuumActivity.RETURNING:
             await self.hass.async_add_executor_job(self._robot.stopclean)
-            self.async_write_ha_state() ###
-            
+
         # According to Home Assistant, pause should be an idempotent action.
         # However, the Pure i9 will toggle pause on/off if called multiple
         # times. Circumvent that.
@@ -259,6 +237,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         self._params.dustbin = params.dustbin
         self._params.last_cleaning_session = params.last_cleaning_session
         self._params.maps = params.maps
+
         self.async_write_ha_state()
 
     def locate(self, **kwargs):
