@@ -9,9 +9,7 @@ from purei9_unofficial.common import (
     CleaningSession,
 )
 from purei9_unofficial.cloudv3 import CloudZone, CloudMap
-from homeassistant.components.vacuum import (
-    VacuumActivity
-)
+from homeassistant.components.vacuum import VacuumActivity
 from . import const
 
 # See: https://github.com/Phype/purei9_unofficial/blob/master/src/purei9_unofficial/common.py
@@ -41,7 +39,8 @@ def state_to_hass(
     # In order to detect if it's docket or if it's just idling in the middle of a room
     # check the battery level. If it's full then we're docked.
     if pure_i9_state == RobotStates.Sleeping:
-        return VacuumActivity.DOCKED if pure_i9_battery == BatteryStatus.High else VacuumActivity.IDLE
+        return (VacuumActivity.DOCKED if pure_i9_battery == BatteryStatus.High
+                else VacuumActivity.IDLE)
 
     return PURE_I9_STATE_MAP.get(pure_i9_state, VacuumActivity.IDLE)
 
@@ -101,7 +100,7 @@ def params_map_create(cloud_map: CloudMap) -> ParamsMap:
 class Params:
     """Data available in the state"""
     battery: int = 100
-    state: str = VacuumActivity.IDLE
+    state: VacuumActivity = VacuumActivity.IDLE
     available: bool = True
     firmware: str = None
     fan_speed: str = POWER_MODE_POWER
