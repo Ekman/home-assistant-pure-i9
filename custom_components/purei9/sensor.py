@@ -30,6 +30,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             PureI9Dustbin(coord, coord.data)
         )
 
+        entities.append(
+            PureI9Battery(coord, coord.data)
+        )
+
     async_add_entities(entities)
 
 class PureI9Sensor(CoordinatorEntity, SensorEntity):
