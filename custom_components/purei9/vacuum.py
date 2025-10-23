@@ -49,8 +49,7 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         # Turn on, turn off and is on is not supported by vacuums anymore
         # See: https://github.com/home-assistant/core/issues/36503
         return (
-            VacuumEntityFeature.BATTERY
-            | VacuumEntityFeature.START
+            VacuumEntityFeature.START
             | VacuumEntityFeature.RETURN_HOME
             | VacuumEntityFeature.STOP
             | VacuumEntityFeature.PAUSE
