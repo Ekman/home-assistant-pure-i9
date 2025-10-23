@@ -1,7 +1,7 @@
 """Home Assistant last cleaning start sensor entity"""
 from datetime import timedelta
 import logging
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import (SensorEntity, SensorDeviceClass)
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from . import purei9, const
 
@@ -28,6 +28,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
         entities.append(
             PureI9Dustbin(coord, coord.data)
+        )
+
+        entities.append(
+            PureI9Battery(coord, coord.data)
         )
 
     async_add_entities(entities)
@@ -70,7 +74,7 @@ class PureI9LastCleaningStart(PureI9Sensor):
     @property
     def device_class(self):
         """The device class of the entity"""
-        return "date"
+        return SensorDeviceClass.DATE
 
     @property
     def native_value(self):
@@ -96,7 +100,7 @@ class PureI9LastCleaningStop(PureI9Sensor):
     @property
     def device_class(self):
         """The device class of the entity"""
-        return "date"
+        return SensorDeviceClass.DATE
 
     @property
     def native_value(self):
@@ -121,7 +125,7 @@ class PureI9LastCleaningDuration(PureI9Sensor):
     @property
     def device_class(self):
         """The device class of the entity"""
-        return "duration"
+        return SensorDeviceClass.DURATION
 
     @property
     def native_unit_of_measurement(self):
@@ -150,7 +154,7 @@ class PureI9Dustbin(PureI9Sensor):
     @property
     def device_class(self):
         """The device class of the entity"""
-        return "enum"
+        return SensorDeviceClass.ENUM
 
     @property
     def options(self):
@@ -161,3 +165,25 @@ class PureI9Dustbin(PureI9Sensor):
     def native_value(self):
         """The current value of the dustbin"""
         return self._params.dustbin.name
+
+class PureI9Battery(PureI9Sensor):
+    """The main Pure i9 battery level"""
+    @property
+    def unique_id(self) -> str:
+        """Unique identifier to the entity"""
+        return f"{self._params.unique_id}_battery"
+
+    @property
+    def name(self):
+        """The sensor name"""
+        return f"{self._params.name} battery"
+
+    @property
+    def device_class(self):
+        """The device class of the entity"""
+        return SensorDeviceClass.BATTERY
+
+    @property
+    def native_value(self):
+        """The current value of the battery"""
+        return self._params.battery
