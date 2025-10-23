@@ -187,3 +187,7 @@ class PureI9Battery(PureI9Sensor):
     def native_value(self):
         """The current value of the battery"""
         return self._params.battery
+
+    @property
+    def native_unit_of_measurement(self):
+        return "%"
