@@ -74,7 +74,7 @@ class PureI9LastCleaningStart(PureI9Sensor):
     @property
     def device_class(self):
         """The device class of the entity"""
-        return "date"
+        return SensorDeviceClass.DATE
 
     @property
     def native_value(self):
@@ -100,7 +100,7 @@ class PureI9LastCleaningStop(PureI9Sensor):
     @property
     def device_class(self):
         """The device class of the entity"""
-        return "date"
+        return SensorDeviceClass.DATE
 
     @property
     def native_value(self):
@@ -125,7 +125,7 @@ class PureI9LastCleaningDuration(PureI9Sensor):
     @property
     def device_class(self):
         """The device class of the entity"""
-        return "duration"
+        return SensorDeviceClass.DURATION
 
     @property
     def native_unit_of_measurement(self):
@@ -154,7 +154,7 @@ class PureI9Dustbin(PureI9Sensor):
     @property
     def device_class(self):
         """The device class of the entity"""
-        return "enum"
+        return SensorDeviceClass.ENUM
 
     @property
     def options(self):
