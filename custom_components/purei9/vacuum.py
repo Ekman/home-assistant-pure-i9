@@ -75,11 +75,6 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         return self._params.name
 
     @property
-    def battery_level(self) -> int:
-        """Battery level, between 0-100"""
-        return self._params.battery
-
-    @property
     def activity(self) -> VacuumActivity:
         """Return the current vacuum activity"""
         return self._params.state
@@ -231,7 +226,6 @@ class PureI9(CoordinatorEntity, StateVacuumEntity):
         self._params.state = params.state
         self._params.fan_speed = params.fan_speed
         self._params.name = params.name
-        self._params.battery = params.battery
         self._params.available = params.available
         self._params.firmware = params.firmware
         self._params.dustbin = params.dustbin

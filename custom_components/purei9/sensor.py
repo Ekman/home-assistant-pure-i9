@@ -1,7 +1,7 @@
 """Home Assistant last cleaning start sensor entity"""
 from datetime import timedelta
 import logging
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import (SensorEntity, SensorDeviceClass)
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from . import purei9, const
 
@@ -161,3 +161,25 @@ class PureI9Dustbin(PureI9Sensor):
     def native_value(self):
         """The current value of the dustbin"""
         return self._params.dustbin.name
+
+class PureI9Battery(PureI9Sensor):
+    """The main Pure i9 battery level"""
+    @property
+    def unique_id(self) -> str:
+        """Unique identifier to the entity"""
+        return f"{self._params.unique_id}_battery"
+
+    @property
+    def name(self):
+        """The sensor name"""
+        return f"{self._params.name} battery"
+
+    @property
+    def device_class(self):
+        """The device class of the entity"""
+        return SensorDeviceClass.BATTERY
+
+    @property
+    def native_value(self):
+        """The current value of the battery"""
+        return self._params.battery

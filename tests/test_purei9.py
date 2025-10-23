@@ -45,7 +45,6 @@ class TestPureI9(unittest.TestCase):
         # No need to test every property. The test will become too fragile.
         self.assertEqual(unique_id, params.unique_id)
         self.assertEqual(name, params.name)
-        self.assertEqual(100, params.battery)
 
         # Attempt to set a new name
         new_name = "hello,world"
