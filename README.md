@@ -4,7 +4,7 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-orange?logo=buy-me-a-coffee)](https://buymeacoffee.com/nekman)
 
-**Discontinued: Use [Home Assistant Wellbeing](https://github.com/JohNan/homeassistant-wellbeing) instead. [Want to know more about my decision? Read here](https://github.com/Ekman/home-assistant-pure-i9/issues/114).**
+**Discontinued: Use [Home Assistant Wellbeing](https://github.com/JohNan/homeassistant-wellbeing) instead. [Why? Read here](https://github.com/Ekman/home-assistant-pure-i9/issues/114).**
 
 Integrate your [Electrolux Pure i9 robot vacuum](https://www.electrolux.se/wellbeing/discover/robot-vacuum-cleaner-purei9/) with the smart home platform [Home Assistant](https://www.home-assistant.io/). The integration communicates with your Pure i9 using the cloud.
 
