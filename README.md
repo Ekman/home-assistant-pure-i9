@@ -2,7 +2,6 @@
 
 [![CircleCI](https://circleci.com/gh/Ekman/home-assistant-pure-i9/tree/master.svg?style=shield)](https://circleci.com/gh/Ekman/home-assistant-pure-i9/tree/master)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
-[![GitHub Sponsors](https://img.shields.io/github/sponsors/Ekman)](https://github.com/sponsors/Ekman)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-orange?logo=buy-me-a-coffee)](https://buymeacoffee.com/braska)
 
 **Discontinued: Use [Home Assistant Wellbeing](https://github.com/JohNan/homeassistant-wellbeing) instead. [Want to know more about my decision? Read here](https://github.com/Ekman/home-assistant-pure-i9/issues/114).**
