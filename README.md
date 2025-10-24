@@ -52,4 +52,4 @@ For a complete list of changes, and how to migrate between major versions, see [
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoffee.com/braska)
 
-If you appreciate this integration, then consider [buying me a coffee](https://buymeacoffee.com/braska). Donations are completely voluntary.
+If you appreciate this integration, then consider [buying me a coffee](https://buymeacoffee.com/nekman). Donations are completely voluntary.
